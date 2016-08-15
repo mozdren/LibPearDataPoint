@@ -3,9 +3,15 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LibPearDataPointTest
 {
+    /// <summary>
+    /// Test for configuration classes
+    /// </summary>
     [TestClass]
     public class ConfigurationTest
     {
+        /// <summary>
+        /// Configuration.getValue method test.
+        /// </summary>
         [TestMethod]
         public void GetValueTest()
         {
@@ -23,6 +29,10 @@ namespace LibPearDataPointTest
             Assert.IsTrue(configuration.GetValue("multivalue") == "testValue1");
         }
 
+
+        /// <summary>
+        /// Configuration.getValues method test.
+        /// </summary>
         [TestMethod]
         public void GetValuesTest()
         {
@@ -46,10 +56,20 @@ namespace LibPearDataPointTest
             Assert.IsTrue(multiValue.LastOrDefault() == "testValue4");
         }
 
+        /// <summary>
+        /// Configuration.Helper - specific configuraion values test.
+        /// </summary>
         [TestMethod]
         public void ConfigurationHelperTest()
         {
-            Assert.IsTrue(LibPearDataPoint.Configuration.Version == "0.160815");
+            Assert.IsTrue(!string.IsNullOrWhiteSpace(LibPearDataPoint.Configuration.Version));
+            Assert.IsTrue(LibPearDataPoint.Configuration.BroadcastPortNumber != 0);
+            Assert.IsTrue(LibPearDataPoint.Configuration.PortNumberRange.Item1 != 0);
+            Assert.IsTrue(LibPearDataPoint.Configuration.PortNumberRange.Item2 != 0);
+            Assert.IsTrue(LibPearDataPoint.Configuration.PortNumberRange.Item1 <=
+                          LibPearDataPoint.Configuration.PortNumberRange.Item2);
+            Assert.IsTrue(LibPearDataPoint.Configuration.MaxPortNumber != 0);
+            Assert.IsTrue(LibPearDataPoint.Configuration.MinPortNumber != 0);
         }
 
     }

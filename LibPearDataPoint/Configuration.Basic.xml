@@ -3,4 +3,11 @@
   <configitem key="version">
     <value>0.160815</value>
   </configitem>
+  <configitem key="broadcastport">
+    <value>29900</value>
+  </configitem>
+  <configitem key="portrange">
+    <value>29901</value>
+    <value>29999</value>
+  </configitem>
 </configuration>

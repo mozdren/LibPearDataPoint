@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration xmlns="http://tempuri.org/Configuration.xsd">
+  <configitem key="singlevalue">
+    <value>testValue</value>
+  </configitem>
+  <configitem key="multivalue">
+    <value>testValue1</value>
+    <value>testValue2</value>
+    <value>testValue3</value>
+    <value>testValue4</value>
+  </configitem>
+  <configitem key="empty">
+  </configitem>
+</configuration>

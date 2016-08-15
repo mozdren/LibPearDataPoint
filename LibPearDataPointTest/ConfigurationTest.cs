@@ -45,5 +45,12 @@ namespace LibPearDataPointTest
             Assert.IsTrue(multiValue.FirstOrDefault() == "testValue1");
             Assert.IsTrue(multiValue.LastOrDefault() == "testValue4");
         }
+
+        [TestMethod]
+        public void ConfigurationHelperTest()
+        {
+            Assert.IsTrue(LibPearDataPoint.Configuration.Version == "0.160815");
+        }
+
     }
 }

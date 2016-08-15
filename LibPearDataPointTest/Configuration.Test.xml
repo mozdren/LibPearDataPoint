@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configuration xmlns="http://tempuri.org/Configuration.xsd">
+  <configitem key="version">
+    <value>0.160815</value>
+  </configitem>
   <configitem key="singlevalue">
     <value>testValue</value>
   </configitem>

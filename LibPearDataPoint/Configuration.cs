@@ -7,7 +7,12 @@ using System.Xml.Linq;
 
 namespace LibPearDataPoint
 {
-    public class Configuration
+    /// <summary>
+    /// This class provides basic interface for configurations stored in various xml files.
+    /// Concrete configuration properties should be written into separated partial implementations.
+    /// The example of such code can be seen in Configuration.Helper.cs file.
+    /// </summary>
+    public partial class Configuration
     {
         #region private constants
 

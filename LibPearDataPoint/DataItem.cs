@@ -35,5 +35,23 @@ namespace LibPearDataPoint
         /// </value>
         [DataMember]
         public string Value { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="DataItem" /> is reliable.
+        /// It is true, if the result was aquired without problems.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if reliable; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsReliable { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is local.
+        /// It returns false if the result was aquired from a remote DataPoint
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is local; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsLocal { get; set; }
     }
 }

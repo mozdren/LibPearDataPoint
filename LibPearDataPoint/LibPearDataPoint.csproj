@@ -45,6 +45,7 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="Configuration.Helper.cs" />
     <Compile Include="DataItem.cs" />
+    <Compile Include="DataItemExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

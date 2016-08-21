@@ -72,5 +72,78 @@ namespace LibPearDataPointTest
             Assert.IsNotNull(changedItem);
             Assert.IsFalse(changedItem.Name.Equals("ChagedValue2"));
         }
+
+        [TestMethod]
+        public void DataPointDataItemConversionTest()
+        {
+            var dataPoint = new LocalDataPoint();
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "longMax", Value = long.MaxValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "longValue", Value = 1985.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "longMin", Value = long.MinValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "longFail", Value = "asd" }));
+
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "ulongMax", Value = ulong.MaxValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "ulongValue", Value = 1985.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "ulongMin", Value = ulong.MinValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "ulongFail", Value = "asd" }));
+
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "intMax", Value = int.MaxValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "intValue", Value = 1985.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "intMin", Value = int.MinValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "intFail", Value = "asd" }));
+
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "uintMax", Value = uint.MaxValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "uintValue", Value = 1985.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "uintMin", Value = uint.MinValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "uintFail", Value = "asd" }));
+
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "shortMax", Value = short.MaxValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "shortValue", Value = 1985.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "shortMin", Value = short.MinValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "shortFail", Value = "asd" }));
+
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "ushortMax", Value = ushort.MaxValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "ushortValue", Value = 1985.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "ushortMin", Value = ushort.MinValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "ushortFail", Value = "asd" }));
+
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "charMax", Value = char.MaxValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "charValue", Value = 'u'.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "charMin", Value = char.MinValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "charFail", Value = "asd" }));
+
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "byteMax", Value = byte.MaxValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "byteValue", Value = 11.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "byteMin", Value = byte.MinValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "byteFail", Value = "asd" }));
+
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "sbyteMax", Value = sbyte.MaxValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "sbyteValue", Value = 11.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "sbyteMin", Value = sbyte.MinValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "sbyteFail", Value = "asd" }));
+
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "floatMax", Value = float.MaxValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "floatValue", Value = 11.11.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "floatMin", Value = float.MinValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "floatFail", Value = "asd" }));
+
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "doubleMax", Value = double.MaxValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "doubleValue", Value = 11.11.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "doubleMin", Value = double.MinValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "doubleFail", Value = "asd" }));
+
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "decimalMax", Value = decimal.MaxValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "decimalValue", Value = 11.11.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "decimalMin", Value = decimal.MinValue.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "decimalFail", Value = "asd" }));
+
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "boolTrue", Value = true.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "boolFalse", Value = false.ToString() }));
+            Assert.IsTrue(dataPoint.Create(new DataItem { Name = "boolFail", Value = "asd" }));
+
+            Assert.IsTrue(dataPoint.Count() == 51);
+
+            // TODO: Check extended methods for casting
+        }
     }
 }

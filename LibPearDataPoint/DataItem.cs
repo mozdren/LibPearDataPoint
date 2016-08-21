@@ -7,7 +7,7 @@ namespace LibPearDataPoint
     /// DataItem which is supposed to be shared over Ethernet
     /// </summary>
     [DataContract]
-    internal class DataItem
+    internal class DataItem : ICloneable
     {
         /// <summary>
         /// Gets or sets the name. The name should be unique over Ethernet
@@ -53,5 +53,30 @@ namespace LibPearDataPoint
         ///   <c>true</c> if this instance is local; otherwise, <c>false</c>.
         /// </value>
         public bool IsLocal { get; set; }
+
+        /// <summary>
+        /// This method returns an exact clone of itself
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
+        {
+            return new DataItem
+            {
+                IsLocal = IsLocal,
+                IsReliable = IsReliable,
+                LastUpdateTime = LastUpdateTime,
+                Name = Name,
+                Value = Value
+            };
+        }
+
+        /// <summary>
+        /// Returns a string value of the dataitem
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return Value;
+        }
     }
 }

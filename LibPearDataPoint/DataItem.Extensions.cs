@@ -1,4 +1,5 @@
-﻿namespace LibPearDataPoint
+﻿using System.Globalization;
+namespace LibPearDataPoint
 {
     /// <summary>
     /// Extension methods over DataItem to provide easier access to values of a specific type.
@@ -8,12 +9,12 @@
     /// 
     /// NOTE: This probably might be written in a better way (templates)... I have to
     ///       look into it later.
-    ///       
-    /// WARN: Unit Tests are Missing!!! Must be corrected as soon as possible!!!
     /// 
     /// </summary>
     internal static class DataItemExtensions
     {
+        #region Getters
+
         /// <summary>
         /// Gets the value as an int.
         /// </summary>
@@ -47,7 +48,7 @@
             {
                 return null;
             }
-
+            
             float output;
 
             if (!float.TryParse(dataItem.Value, out output))
@@ -85,7 +86,7 @@
         /// </summary>
         /// <param name="dataItem">The data item.</param>
         /// <returns></returns>
-        internal static double? AsLong(this DataItem dataItem)
+        internal static long? AsLong(this DataItem dataItem)
         {
             if (dataItem == null || string.IsNullOrWhiteSpace(dataItem.Value))
             {
@@ -314,5 +315,151 @@
 
             return dataItem.Value;
         }
+
+        #endregion
+
+        #region Setters
+
+        /// <summary>
+        /// Sets int data to dataitem
+        /// </summary>
+        /// <param name="dataItem">data item</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, int value)
+        {
+            dataItem.Value = value.ToString();
+        }
+
+        /// <summary>
+        /// Sets float data to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, float value)
+        {
+            dataItem.Value = value.ToString();
+        }
+
+        /// <summary>
+        /// Sets double data to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, double value)
+        {
+            dataItem.Value = value.ToString();
+        }
+
+        /// <summary>
+        /// Sets long data to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, long value)
+        {
+            dataItem.Value = value.ToString();
+        }
+
+        /// <summary>
+        /// Sets bool data to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, bool value)
+        {
+            dataItem.Value = value.ToString();
+        }
+
+        /// <summary>
+        /// Sets byte data to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, byte value)
+        {
+            dataItem.Value = value.ToString();
+        }
+
+        /// <summary>
+        /// Sets short byte data to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, sbyte value)
+        {
+            dataItem.Value = value.ToString();
+        }
+
+        /// <summary>
+        /// Sets char data to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, char value)
+        {
+            dataItem.Value = value.ToString();
+        }
+
+        /// <summary>
+        /// Sets decimal data to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, decimal value)
+        {
+            dataItem.Value = value.ToString();
+        }
+
+        /// <summary>
+        /// Sets unsigned int data to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, uint value)
+        {
+            dataItem.Value = value.ToString();
+        }
+
+        /// <summary>
+        /// Sets unsigned long data to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, ulong value)
+        {
+            dataItem.Value = value.ToString();
+        }
+
+        /// <summary>
+        /// Sets short data to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, short value)
+        {
+            dataItem.Value = value.ToString();
+        }
+
+        /// <summary>
+        /// Sets unsigned short data to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, ushort value)
+        {
+            dataItem.Value = value.ToString();
+        }
+
+        /// <summary>
+        /// Sets string data to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, string value)
+        {
+            dataItem.Value = value;
+        }
+
+        #endregion
     }
 }

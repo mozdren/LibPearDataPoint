@@ -7,7 +7,7 @@ namespace LibPearDataPoint
     /// DataItem which is supposed to be shared over Ethernet
     /// </summary>
     [DataContract]
-    internal class DataItem : ICloneable
+    public partial class DataItem : ICloneable
     {
         /// <summary>
         /// Gets or sets the name. The name should be unique over Ethernet

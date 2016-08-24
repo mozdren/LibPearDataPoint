@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace LibPearDataPoint
 {
@@ -38,6 +39,11 @@ namespace LibPearDataPoint
         /// </summary>
         public static Pear Data { get {return _pearData;} }
 
+        /// <summary>
+        /// count of dataitems stored localy
+        /// </summary>
+        public static int CountLocal { get { return Data._localDataPoint.Count(); } }
+
         #endregion
 
         #region Constructors
@@ -72,7 +78,7 @@ namespace LibPearDataPoint
         {
             if (string.IsNullOrWhiteSpace(key) || value == null)
             {
-                throw new InvalidOperationException("key or value cannot be null");
+                return false;
             }
             
             // check if exists localy
@@ -90,6 +96,11 @@ namespace LibPearDataPoint
             return _localDataPoint.Create(dataItem);
         }
 
+        /// <summary>
+        /// string indexation of datapoint
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <returns>dataitem stored under specific key</returns>
         public DataItem this[string key]
         {
             get
@@ -129,6 +140,28 @@ namespace LibPearDataPoint
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Removes a dataitem, but only from local datapoint. It is by design not possible
+        /// to remove remote datapoints
+        /// </summary>
+        /// <param name="key">key with datapoint that should be removed</param>
+        /// <returns>true if success</returns>
+        public bool Remove(string key)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return false;
+            }
+
+            // check if exists localy
+            var item = _localDataPoint[key];
+            if (item == null)
+            {
+                return false;
+            }
+
+            return _localDataPoint.Remove(item);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+
 namespace LibPearDataPoint
 {
     /// <summary>
@@ -458,6 +459,39 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, string value)
         {
             dataItem.Value = value;
+        }
+
+        /// <summary>
+        /// Sets value if the data to be set are supported by the dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void SetSupported(this DataItem dataItem, object value)
+        {
+            if (value == null)
+            {
+                throw new InvalidOperationException("value to be set cannot be null");
+            }
+
+            var valueType = value.GetType().ToString();
+            switch (valueType)
+            {
+                case GlobalConstants.Types.Bool: dataItem.Set((bool)value); break;
+                case GlobalConstants.Types.Byte: dataItem.Set((byte)value); break;
+                case GlobalConstants.Types.Char: dataItem.Set((char)value); break;
+                case GlobalConstants.Types.Decimal: dataItem.Set((decimal)value); break;
+                case GlobalConstants.Types.Double: dataItem.Set((double)value); break;
+                case GlobalConstants.Types.Int: dataItem.Set((int)value); break;
+                case GlobalConstants.Types.Long: dataItem.Set((long)value); break;
+                case GlobalConstants.Types.SByte: dataItem.Set((sbyte)value); break;
+                case GlobalConstants.Types.Short: dataItem.Set(value.ToString()); break;
+                case GlobalConstants.Types.Single: dataItem.Set((float)value); break;
+                case GlobalConstants.Types.String: dataItem.Set(value.ToString()); break;
+                case GlobalConstants.Types.UInt: dataItem.Set((uint)value); break;
+                case GlobalConstants.Types.ULong: dataItem.Set((ulong)value); break;
+                case GlobalConstants.Types.UShort: dataItem.Set((ushort)value); break;
+                default: throw new InvalidCastException("The value is not of a supported type");
+            }
         }
 
         #endregion

@@ -62,14 +62,15 @@ namespace LibPearDataPointTest
         [TestMethod]
         public void ConfigurationHelperTest()
         {
-            Assert.IsTrue(!string.IsNullOrWhiteSpace(LibPearDataPoint.Configuration.Version));
-            Assert.IsTrue(LibPearDataPoint.Configuration.BroadcastPortNumber != 0);
-            Assert.IsTrue(LibPearDataPoint.Configuration.PortNumberRange.Item1 != 0);
-            Assert.IsTrue(LibPearDataPoint.Configuration.PortNumberRange.Item2 != 0);
-            Assert.IsTrue(LibPearDataPoint.Configuration.PortNumberRange.Item1 <=
-                          LibPearDataPoint.Configuration.PortNumberRange.Item2);
-            Assert.IsTrue(LibPearDataPoint.Configuration.MaxPortNumber != 0);
-            Assert.IsTrue(LibPearDataPoint.Configuration.MinPortNumber != 0);
+            var configuration = new LibPearDataPoint.Configuration();
+            Assert.IsTrue(!string.IsNullOrWhiteSpace(configuration.Version));
+            Assert.IsTrue(configuration.BroadcastPortNumber != 0);
+            Assert.IsTrue(configuration.PortNumberRange.Item1 != 0);
+            Assert.IsTrue(configuration.PortNumberRange.Item2 != 0);
+            Assert.IsTrue(configuration.PortNumberRange.Item1 <=
+                          configuration.PortNumberRange.Item2);
+            Assert.IsTrue(configuration.MaxPortNumber != 0);
+            Assert.IsTrue(configuration.MinPortNumber != 0);
         }
 
     }

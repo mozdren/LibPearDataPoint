@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LibPearDataPoint
 {
@@ -16,7 +13,7 @@ namespace LibPearDataPoint
         /// <summary>
         /// The static instance of basic configuration provider
         /// </summary>
-        private static Configuration _basicConfiguration = new Configuration("Configuration.Basic.xml");
+        private static Configuration _basicConfiguration = new Configuration("Configuration.xml");
 
         #endregion
 
@@ -28,7 +25,7 @@ namespace LibPearDataPoint
         /// <value>
         /// The version.
         /// </value>
-        public static string Version
+        public string Version
         {
             get { return _basicConfiguration.GetValue("version"); }
         }
@@ -39,7 +36,7 @@ namespace LibPearDataPoint
         /// <value>
         /// The port number range.
         /// </value>
-        public static Tuple<int, int> PortNumberRange
+        public Tuple<int, int> PortNumberRange
         {
             get
             {
@@ -68,7 +65,7 @@ namespace LibPearDataPoint
         /// <value>
         /// The minimum port number.
         /// </value>
-        public static int MinPortNumber
+        public int MinPortNumber
         {
             get { return PortNumberRange.Item1; }
         }
@@ -79,7 +76,7 @@ namespace LibPearDataPoint
         /// <value>
         /// The maximum port number.
         /// </value>
-        public static int MaxPortNumber
+        public int MaxPortNumber
         {
             get { return PortNumberRange.Item2; }
         }
@@ -90,7 +87,7 @@ namespace LibPearDataPoint
         /// <value>
         /// The broadcast port number.
         /// </value>
-        public static int BroadcastPortNumber
+        public int BroadcastPortNumber
         {
             get
             {

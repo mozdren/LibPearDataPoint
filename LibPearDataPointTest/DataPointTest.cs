@@ -247,7 +247,6 @@ namespace LibPearDataPointTest
             Assert.IsNotNull(dataPoint["boolFalse"].AsBool());
             Assert.IsTrue(dataPoint["boolFalse"] == false);
             Assert.IsNull(dataPoint["boolFail"].AsBool());
-
         }
     }
 }

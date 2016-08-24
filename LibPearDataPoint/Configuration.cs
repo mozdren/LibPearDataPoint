@@ -62,14 +62,13 @@ namespace LibPearDataPoint
 
         #endregion
 
-        #region private constructors
+        #region internal constructors
 
         /// <summary>
-        /// Prevents a default instance of the <see cref="Configuration"/> class from being created.
+        /// Default constructor
         /// </summary>
-        private Configuration()
+        internal Configuration()
         {
-
         }
 
         #endregion

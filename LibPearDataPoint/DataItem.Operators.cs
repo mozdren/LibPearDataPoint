@@ -46,6 +46,40 @@ namespace LibPearDataPoint
         }
 
         /// <summary>
+        /// Implicit conversion to short
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>short value</returns>
+        public static implicit operator short(DataItem dataItem)
+        {
+            var result = dataItem.AsShort();
+
+            if (result.HasValue)
+            {
+                return result.Value;
+            }
+
+            throw new InvalidCastException("Cannot implicitly convert to short");
+        }
+
+        /// <summary>
+        /// Implicit conversion to unsigned short
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>unsigned short value</returns>
+        public static implicit operator ushort(DataItem dataItem)
+        {
+            var result = dataItem.AsUShort();
+
+            if (result.HasValue)
+            {
+                return result.Value;
+            }
+
+            throw new InvalidCastException("Cannot implicitly convert to unsigned short");
+        }
+
+        /// <summary>
         /// Implicit conversion to long
         /// </summary>
         /// <param name="dataItem">dataitem</param>

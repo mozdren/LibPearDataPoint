@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LibPearDataPoint;
 
@@ -91,6 +92,9 @@ namespace LibPearDataPointTest
             ulong ulongMin = Pear.Data["ulongMin"]; Assert.IsTrue(ulongMin == ulong.MinValue);
             ushort ushortMax = Pear.Data["ushortMax"]; Assert.IsTrue(ushortMax == ushort.MaxValue);
             ushort ushortMin = Pear.Data["ushortMin"]; Assert.IsTrue(ushortMin == ushort.MinValue);
+
+            var maxValues = Pear.Data.Where(item => item.Name.Contains("Max"));
+            Assert.IsTrue(maxValues.Count() == 9);
 
             Assert.IsTrue(Pear.Data.Remove("boolTrue"));
             Assert.IsTrue(Pear.Data.Remove("boolFalse"));

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LibPearDataPoint
@@ -6,7 +8,7 @@ namespace LibPearDataPoint
     /// <summary>
     /// This class is the entry poind for data to be shared localy and over network
     /// </summary>
-    public class Pear
+    public class Pear : IEnumerable<DataItem>
     {
         #region private fields
 
@@ -162,6 +164,24 @@ namespace LibPearDataPoint
             }
 
             return _localDataPoint.Remove(item);
+        }
+
+        /// <summary>
+        /// Returns enumerator enumerating trough local dataitems (external/network dataitems are not included)
+        /// </summary>
+        /// <returns>local dataitems enumerator</returns>
+        public IEnumerator<DataItem> GetEnumerator()
+        {
+            return ((IEnumerable<DataItem>)_localDataPoint).GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns enumerator enumerating trough local dataitems (external/network dataitems are not included)
+        /// </summary>
+        /// <returns>local dataitems enumerator</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<DataItem>)_localDataPoint).GetEnumerator();
         }
     }
 }

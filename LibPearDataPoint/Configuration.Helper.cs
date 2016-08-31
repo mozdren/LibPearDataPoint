@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 
 namespace LibPearDataPoint
 {
@@ -99,6 +100,44 @@ namespace LibPearDataPoint
                 }
 
                 return broadcastPortNumber;
+            }
+        }
+
+        /// <summary>
+        /// Ip Address where the structure of datapoint is being announced
+        /// </summary>
+        public IPAddress BroadcastAddress
+        {
+            get
+            {
+                var broadcastAddressString = _basicConfiguration.GetValue("broadcastaddress");
+
+                IPAddress broadcastAddress;
+                if (!IPAddress.TryParse(broadcastAddressString, out broadcastAddress))
+                {
+                    return new IPAddress(new byte[] { 0, 0, 0, 0 });
+                }
+
+                return broadcastAddress;
+            }
+        }
+
+        /// <summary>
+        /// Interval for sending announcing messages
+        /// </summary>
+        public int AnnouncingInterval
+        {
+            get
+            {
+                var announcingIntervalStr = _basicConfiguration.GetValue("announcinginterval");
+
+                int announcingInterval;
+                if (!int.TryParse(announcingIntervalStr, out announcingInterval))
+                {
+                    return 0;
+                }
+
+                return announcingInterval;
             }
         }
 

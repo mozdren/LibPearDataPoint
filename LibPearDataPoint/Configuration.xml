@@ -6,6 +6,12 @@
   <configitem key="broadcastport">
     <value>29900</value>
   </configitem>
+  <configitem key="broadcastaddress">
+    <value>127.0.0.255</value>
+  </configitem>
+  <configitem key="announcinginterval">
+    <value>1000</value>
+  </configitem>
   <configitem key="portrange">
     <value>29901</value>
     <value>29999</value>

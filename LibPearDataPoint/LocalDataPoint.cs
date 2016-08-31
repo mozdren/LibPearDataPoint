@@ -207,6 +207,13 @@ namespace LibPearDataPoint
                 return null;
             }
 
+            // Name is not of a defined format
+            if (!Utils.IsNameValid(workItem.Name))
+            {
+                Trace.WriteLine(string.Format("{0} Validation Failed - item name is not of valid format", TracerConstant));
+                return null;
+            }
+
             // validated, let's return validated clone
             return workItem;
         }

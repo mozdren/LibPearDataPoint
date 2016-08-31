@@ -40,18 +40,18 @@ namespace LibPearDataPointTest
             Assert.IsNotNull(configuration);
 
             // returns empty collection
-            Assert.IsTrue(configuration.GetValues(null).Count() == 0);
-            Assert.IsTrue(configuration.GetValues(string.Empty).Count() == 0);
-            Assert.IsTrue(configuration.GetValues("nonexistingkey").Count() == 0);
-            Assert.IsTrue(configuration.GetValues("empty").Count() == 0);
+            Assert.IsTrue(!configuration.GetValues(null).Any());
+            Assert.IsTrue(!configuration.GetValues(string.Empty).Any());
+            Assert.IsTrue(!configuration.GetValues("nonexistingkey").Any());
+            Assert.IsTrue(!configuration.GetValues("empty").Any());
 
             // Happy flows
-            var singleValue = configuration.GetValues("singlevalue");
-            Assert.IsTrue(singleValue.Count() == 1);
+            var singleValue = configuration.GetValues("singlevalue").ToArray();
+            Assert.IsTrue(singleValue.Length == 1);
             Assert.IsTrue(singleValue.FirstOrDefault() == "testValue");
 
-            var multiValue = configuration.GetValues("multivalue");
-            Assert.IsTrue(multiValue.Count() == 4);
+            var multiValue = configuration.GetValues("multivalue").ToArray();
+            Assert.IsTrue(multiValue.Length == 4);
             Assert.IsTrue(multiValue.FirstOrDefault() == "testValue1");
             Assert.IsTrue(multiValue.LastOrDefault() == "testValue4");
         }
@@ -71,6 +71,8 @@ namespace LibPearDataPointTest
                           configuration.PortNumberRange.Item2);
             Assert.IsTrue(configuration.MaxPortNumber != 0);
             Assert.IsTrue(configuration.MinPortNumber != 0);
+            Assert.IsTrue(configuration.AnnouncingInterval != 0);
+            Assert.IsTrue(!Equals(configuration.BroadcastAddress, new System.Net.IPAddress(new byte[] { 0, 0, 0, 0 })));
         }
 
     }

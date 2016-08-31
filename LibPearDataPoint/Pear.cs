@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 
 namespace LibPearDataPoint
@@ -48,8 +49,21 @@ namespace LibPearDataPoint
 
         #endregion
 
+        #region Internal Properties
+
+        /// <summary>
+        /// This propertie should return a service port on which the data are provided.
+        /// Eeach DataPoint should have only one service.
+        /// TODO: this is mocked with constant 1234, should be replaced with real port number
+        /// </summary>
+        internal static int ServicePort {
+            get { return 1234; }
+        }
+
+        #endregion
+
         #region Constructors
-        
+
         /// <summary>
         /// There can be only one instance of this class
         /// </summary>
@@ -125,7 +139,6 @@ namespace LibPearDataPoint
                     throw new InvalidOperationException("cannot set data item or key to null");
                 }
 
-                var valueType = value.GetType().ToString();
                 var localValue = _localDataPoint[key];
                 if (localValue != null)
                 {

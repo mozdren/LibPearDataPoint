@@ -15,13 +15,12 @@ namespace LibPearDataPointTest
         public void LocalDataPointTest()
         {
             var dataPoint = new LocalDataPoint();
-            Assert.IsTrue(dataPoint.Count() == 0);
+            Assert.IsTrue(!dataPoint.Any());
 
             // Unhappy Flow Create
-            DataItem dataItem = null;
-            Assert.IsFalse(dataPoint.Create(dataItem));
+            Assert.IsFalse(dataPoint.Create(null));
 
-            dataItem = new DataItem();
+            var dataItem = new DataItem();
             Assert.IsFalse(dataPoint.Create(dataItem));
 
             dataItem.Name = "    ";
@@ -65,7 +64,6 @@ namespace LibPearDataPointTest
             // Happy Update Flow - get item, change data
             var itemToChange = dataPoint.FirstOrDefault(item => item.Name.Equals("item2"));
             Assert.IsNotNull(itemToChange);
-            var oldValue = itemToChange.Value;
             itemToChange.Value = "ChangedValue2";
             Assert.IsTrue(dataPoint.Update(itemToChange));
             var changedItem = dataPoint.FirstOrDefault(item => item.Name.Equals("item2"));
@@ -223,7 +221,7 @@ namespace LibPearDataPointTest
             Assert.IsNotNull(dataPoint["floatMinusPi"].AsFloat());
             Assert.IsTrue(Math.Abs(dataPoint["floatMinusPi"] + (float)Math.PI) < 0.000001f);
             Assert.IsNotNull(dataPoint["floatValue"].AsFloat());
-            Assert.IsTrue(dataPoint["floatValue"] == 11.11f);
+            Assert.IsTrue(Math.Abs(dataPoint["floatValue"] - 11.11f) < 0.000001f);
             Assert.IsNull(dataPoint["floatFail"].AsFloat());
 
             Assert.IsNotNull(dataPoint["doublePi"].AsDouble());
@@ -231,7 +229,7 @@ namespace LibPearDataPointTest
             Assert.IsNotNull(dataPoint["doubleMinusPi"].AsDouble());
             Assert.IsTrue(Math.Abs(dataPoint["doubleMinusPi"] + Math.PI) < 0.00000000000001);
             Assert.IsNotNull(dataPoint["doubleValue"].AsDouble());
-            Assert.IsTrue(dataPoint["doubleValue"] == 11.11d);
+            Assert.IsTrue(Math.Abs(dataPoint["doubleValue"] - 11.11d) < 0.00000000000001);
             Assert.IsNull(dataPoint["doubleFail"].AsDouble());
 
             Assert.IsNotNull(dataPoint["decimalPi"].AsDecimal());

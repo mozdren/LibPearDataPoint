@@ -108,7 +108,7 @@ namespace LibPearDataPoint
                     return _getValueCache.Get(key).ToString();
                 }
 
-                XElement root = XElement.Load(_configFileName);
+                var root = XElement.Load(_configFileName);
                 var configItem = (from el in root.Elements()
                                   where el.Attribute("key").Value == key
                                   select el).FirstOrDefault();
@@ -121,20 +121,28 @@ namespace LibPearDataPoint
 
                 var configValue = configItem.Elements().FirstOrDefault();
 
-                if (string.IsNullOrWhiteSpace(configValue.Value))
+                if (configValue != null)
                 {
-                    Trace.WriteLine(string.Format("Error in {0}: {1} for key: {2}", TracerConstant, WrongConfiguration, key));
-                    return string.Empty; // always return something, at least an empty collection
-                }
+                    if (string.IsNullOrWhiteSpace(configValue.Value))
+                    {
+                        Trace.WriteLine(string.Format("Error in {0}: {1} for key: {2}", TracerConstant, WrongConfiguration, key));
+                        return string.Empty; // always return something, at least an empty collection
+                    }
 
-                _getValueCache.Set(new CacheItem(key, configValue.Value), new CacheItemPolicy { AbsoluteExpiration = DateTime.Now.AddSeconds(ConfigurationCacheExpiration) });
-                return configValue.Value;
+
+                    _getValueCache.Set(new CacheItem(key, configValue.Value),
+                        new CacheItemPolicy {AbsoluteExpiration = DateTime.Now.AddSeconds(ConfigurationCacheExpiration)});
+                    return configValue.Value;
+                }
             }
             catch (Exception ex)
             {
                 Trace.WriteLine(string.Format("Exception in {0}: {1} for key: {2}", TracerConstant, ex.Message, key));
                 return string.Empty; // always return something, at least an empty string
             }
+
+            // wahatever happens, we will always return at least empty string
+            return string.Empty;
         }
 
         /// <summary>
@@ -177,17 +185,20 @@ namespace LibPearDataPoint
                     return new List<string>(); // always return something, at least an empty collection
                 }
 
-                var configValueElements = configItem.Elements();
-                if (configValueElements.Any(item => item == null || string.IsNullOrWhiteSpace(item.Value)))
-                {
-                    Trace.WriteLine(string.Format("Error in {0}: {1} for key: {2}", TracerConstant, WrongConfiguration, key));
-                    return new List<string>(); // always return something, at least an empty collection
-                }
+                var configValueElements = configItem.Elements().ToArray();
 
-                var values = configValueElements.Select(item => item.Value).ToArray();
+                    if (configValueElements.Any(item => item == null || string.IsNullOrWhiteSpace(item.Value)))
+                    {
+                        Trace.WriteLine(string.Format("Error in {0}: {1} for key: {2}", TracerConstant,
+                            WrongConfiguration, key));
+                        return new List<string>(); // always return something, at least an empty collection
+                    }
 
-                _getValuesCache.Set(new CacheItem(key, values), new CacheItemPolicy { AbsoluteExpiration = DateTime.Now.AddSeconds(ConfigurationCacheExpiration) });
-                return values;
+                    var values = configValueElements.Select(item => item.Value).ToArray();
+
+                    _getValuesCache.Set(new CacheItem(key, values),
+                        new CacheItemPolicy {AbsoluteExpiration = DateTime.Now.AddSeconds(ConfigurationCacheExpiration)});
+                    return values;
             }
             catch (Exception ex)
             {

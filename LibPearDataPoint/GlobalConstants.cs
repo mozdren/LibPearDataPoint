@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LibPearDataPoint
+﻿namespace LibPearDataPoint
 {
 
-
+    /// <summary>
+    /// Global constants
+    /// </summary>
     public static class GlobalConstants
     {
+        /// <summary>
+        /// String constants for types
+        /// </summary>
         public static class Types
         {
             public const string Bool = "System.Boolean";

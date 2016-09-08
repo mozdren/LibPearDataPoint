@@ -58,6 +58,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataItemTest.cs" />
     <Compile Include="AnnoucerAndListenerTest.cs" />
+    <Compile Include="DataPointServiceTest.cs" />
     <Compile Include="UtilsTest.cs" />
   </ItemGroup>
   <ItemGroup>

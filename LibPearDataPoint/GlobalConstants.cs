@@ -27,5 +27,14 @@
             public const string UShort = "System.UInt16";
             public const string String = "System.String";
         }
+
+        /// <summary>
+        /// Command constants
+        /// </summary>
+        internal static class Commands
+        {
+            internal const string Get = "GET";
+            internal const string Set = "SET";
+        }
     }
 }

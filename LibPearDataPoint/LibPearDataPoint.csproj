@@ -49,6 +49,8 @@
     <Compile Include="DataItem.cs" />
     <Compile Include="DataItem.Extensions.cs" />
     <Compile Include="DataItem.Operators.cs" />
+    <Compile Include="DataPointService.cs" />
+    <Compile Include="DataPointServiceClient.cs" />
     <Compile Include="GlobalConstants.cs" />
     <Compile Include="LocalDataPoint.cs" />
     <Compile Include="Pear.cs" />

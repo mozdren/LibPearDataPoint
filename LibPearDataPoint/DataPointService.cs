@@ -48,11 +48,13 @@ namespace LibPearDataPoint
         }
 
         /// <summary>
-        /// Starts the service
+        /// Starting service with a specific port, or selects port according to configuration
         /// </summary>
-        internal void StartService()
+        /// <param name="port">port number to be used for service, or 0 if range should be used</param>
+        internal void StartService(int port = 0)
         {
-            _serviceSocket = GetServiceSocket();
+            _serviceSocket = GetServiceSocket(port);
+
             if (_serviceSocket == null)
             {
                 Trace.WriteLine("Could not create service socket. Aborting!");
@@ -105,11 +107,31 @@ namespace LibPearDataPoint
         }
 
         /// <summary>
-        /// Returns unique (free) port number on given system
+        /// Returns socket with unique (free) port number on current system
         /// </summary>
+        /// <param name="port">specific port or random is selected if 0</param>
         /// <returns></returns>
-        private Socket GetServiceSocket()
+        private Socket GetServiceSocket(int port = 0)
         {
+            if (port != 0)
+            {
+                try
+                {
+                    var newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    newSocket.NoDelay = true;
+                    var endPoint = new IPEndPoint(new IPAddress(new byte[] { 0, 0, 0, 0 }), port);
+                    newSocket.Bind(endPoint);
+                    newSocket.Listen(100);
+                    ServicePort = port;
+                    return newSocket;
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine(string.Format("Could not create Socket. The port is probably already occupied by another application, or you don't have rights to create the port (PORT:{0}, exception: {1})", port, ex.Message));
+                    return null;
+                }
+            }
+
             var maxPortsSize = Pear.Configuration.MaxPortNumber - Pear.Configuration.MinPortNumber;
             var ocupiedPorts = new List<int> {0}; // zero is definetely not allowed
 

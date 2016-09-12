@@ -14,6 +14,8 @@ namespace LibPearDataPointTest
         [TestMethod]
         public void PearDataTest()
         { 
+            Pear.Data.Deinit();
+
             Assert.IsTrue(Pear.Data.Create("boolTrue", true));
             Assert.IsTrue(Pear.Data.Create("boolFalse", false));
             Assert.IsTrue(Pear.Data.Create("boolCreate"));
@@ -136,6 +138,8 @@ namespace LibPearDataPointTest
             Assert.IsTrue(Pear.Data.Remove("ushortCreate"));
 
             Assert.IsTrue(Pear.CountLocal == 0);
+
+            Pear.Data.Deinit();
         }
     }
 }

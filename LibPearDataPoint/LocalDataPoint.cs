@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -141,7 +142,7 @@ namespace LibPearDataPoint
         /// Provides enumerator over cloned elements of the data item collection
         /// </summary>
         /// <returns>local data item collection enumerator</returns>
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             return _localDataItems.Values.Select(item => item.Clone() as DataItem).GetEnumerator();
         }

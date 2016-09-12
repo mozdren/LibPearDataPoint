@@ -14,6 +14,8 @@ namespace LibPearDataPointTest
         [TestMethod]
         public void LocalDataPointTest()
         {
+            Pear.Data.Deinit();
+
             var dataPoint = new LocalDataPoint();
             Assert.IsTrue(!dataPoint.Any());
 
@@ -69,11 +71,15 @@ namespace LibPearDataPointTest
             var changedItem = dataPoint.FirstOrDefault(item => item.Name.Equals("item2"));
             Assert.IsNotNull(changedItem);
             Assert.IsFalse(changedItem.Name.Equals("ChagedValue2"));
+
+            Pear.Data.Deinit();
         }
 
         [TestMethod]
         public void DataPointDataItemConversionTest()
         {
+            Pear.Data.Deinit();
+
             var dataPoint = new LocalDataPoint();
 
             var item = new DataItem();
@@ -245,6 +251,8 @@ namespace LibPearDataPointTest
             Assert.IsNotNull(dataPoint["boolFalse"].AsBool());
             Assert.IsTrue(dataPoint["boolFalse"] == false);
             Assert.IsNull(dataPoint["boolFail"].AsBool());
+
+            Pear.Data.Deinit();
         }
     }
 }

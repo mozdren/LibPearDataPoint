@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 
 namespace LibPearDataPoint
 {
@@ -330,6 +329,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, int value)
         {
             dataItem.Value = value.ToString();
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -340,6 +340,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, float value)
         {
             dataItem.Value = value.ToString();
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -350,6 +351,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, double value)
         {
             dataItem.Value = value.ToString();
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -360,6 +362,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, long value)
         {
             dataItem.Value = value.ToString();
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -370,6 +373,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, bool value)
         {
             dataItem.Value = value.ToString();
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -380,6 +384,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, byte value)
         {
             dataItem.Value = value.ToString();
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -390,6 +395,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, sbyte value)
         {
             dataItem.Value = value.ToString();
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -400,6 +406,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, char value)
         {
             dataItem.Value = value.ToString();
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -410,6 +417,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, decimal value)
         {
             dataItem.Value = value.ToString();
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -420,6 +428,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, uint value)
         {
             dataItem.Value = value.ToString();
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -430,6 +439,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, ulong value)
         {
             dataItem.Value = value.ToString();
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -440,6 +450,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, short value)
         {
             dataItem.Value = value.ToString();
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -450,6 +461,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, ushort value)
         {
             dataItem.Value = value.ToString();
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -460,6 +472,7 @@ namespace LibPearDataPoint
         internal static void Set(this DataItem dataItem, string value)
         {
             dataItem.Value = value;
+            dataItem.LastUpdateTime = DateTime.Now;
         }
 
         /// <summary>

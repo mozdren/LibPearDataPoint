@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace LibPearDataPoint
@@ -21,7 +20,22 @@ namespace LibPearDataPoint
         /// <summary>
         /// Basic Local Configuration - configuration stored in Configuration.Basic.xml
         /// </summary>
-        private readonly Configuration _basicConfiguration = new Configuration("Configuration.Basic");
+        private readonly Configuration _basicConfiguration = new Configuration("Configuration.xml");
+
+        /// <summary>
+        /// Service providing data for datapoint clients
+        /// </summary>
+        private DataPointService _dataPointService;
+
+        /// <summary>
+        /// announcer - announcing local data items
+        /// </summary>
+        private Announcer _announcer;
+
+        /// <summary>
+        /// Annoucment listener listens to annoucments of distant datapoints and keeps track of them
+        /// </summary>
+        private AnnouncementListener _announcementListener;
 
         /// <summary>
         /// Singleton of a pear object
@@ -40,7 +54,16 @@ namespace LibPearDataPoint
         /// <summary>
         /// A singleton getter - there is only one instance of this class in a whole application
         /// </summary>
-        public static Pear Data { get {return _pearData;} }
+        public static Pear Data {
+            get
+            {
+                if (_pearData._dataPointService == null)
+                {
+                    _pearData.Init();
+                }
+                return _pearData;
+            }
+        }
 
         /// <summary>
         /// count of dataitems stored localy
@@ -54,10 +77,9 @@ namespace LibPearDataPoint
         /// <summary>
         /// This propertie should return a service port on which the data are provided.
         /// Eeach DataPoint should have only one service.
-        /// TODO: this is mocked with constant 1234, should be replaced with real port number
         /// </summary>
         internal static int ServicePort {
-            get { return 1234; }
+            get { return Data._dataPointService.ServicePort; }
         }
 
         #endregion
@@ -66,9 +88,64 @@ namespace LibPearDataPoint
 
         /// <summary>
         /// There can be only one instance of this class
+        /// and it has to initialize components in a specific order
         /// </summary>
         private Pear()
         {
+        }
+
+        /// <summary>
+        /// Initialization of the internal modules
+        /// </summary>
+        internal void Init()
+        {
+            _dataPointService = new DataPointService(_localDataPoint);
+            _announcer = new Announcer(_localDataPoint);
+            _announcementListener = new AnnouncementListener();
+            _announcer.StartAnnouncing();
+            _dataPointService.StartService();
+        }
+
+        /// <summary>
+        /// Deinitialization of the internal modules
+        /// </summary>
+        internal void Deinit()
+        {
+            try
+            {
+                // Stop all modules first
+                if (_announcer != null)
+                {
+                    _announcer.StopAnnouncing();
+                }
+
+                if (_announcementListener != null)
+                {
+                    _announcementListener.StopListening();
+                }
+
+                if (_dataPointService != null)
+                {
+                    _dataPointService.StopService();
+                }
+
+                // Set all modules to null, so the GC can collect and next init works properly
+                _announcer = null;
+                _announcementListener = null;
+                _dataPointService = null;
+            }
+            catch (KeyNotFoundException ex)
+            {
+                Trace.WriteLine(string.Format("Exception when shutting down modules: {0}", ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Destructor - stops services
+        /// </summary>
+        ~Pear()
+        {
+            Deinit();
         }
         
         #endregion
@@ -113,6 +190,34 @@ namespace LibPearDataPoint
         }
 
         /// <summary>
+        /// Updates the value localy if the item is local, or sends a command to update the value in distant datapoint
+        /// </summary>
+        /// <typeparam name="T">generic type of the value to be set</typeparam>
+        /// <param name="key">key value of the dataitem</param>
+        /// <param name="value">value to be set</param>
+        /// <returns>true if successful</returns>
+        public bool Update<T>(string key, T value)
+        {
+            // check if the input values make sense
+            if (string.IsNullOrWhiteSpace(key) || value == null)
+            {
+                return false;
+            }
+
+            // check if exists localy
+            if (_localDataPoint[key] != null)
+            {
+                var dataItem = new DataItem { Name = key };
+                dataItem.SetSupported(value);
+                return _localDataPoint.Update(dataItem);
+            }
+
+            // TODO: if not exists localy, then check existence in distant endpoints
+
+            return false;
+        }
+
+        /// <summary>
         /// string indexation of datapoint
         /// </summary>
         /// <param name="key">key</param>
@@ -121,38 +226,24 @@ namespace LibPearDataPoint
         {
             get
             {
+                // exists localy?
                 var localValue = _localDataPoint[key];
                 if (localValue != null)
                 {
                     return localValue;
                 }
 
-                // TODO: after network datapoint is ready, check data also over network
+                // exists in distant datapoint?
+                if (_announcementListener.GetNames().Contains(key))
+                {
+                    return 
+                        _announcementListener
+                        .GetEndpoints(key)
+                        .Select(ipEndPoint => DataPointServiceClient.GetDataItem(ipEndPoint, key))
+                        .FirstOrDefault(dataItem => dataItem != null);
+                }
 
                 return null;
-            }
-
-            set
-            {
-                if (value == null || string.IsNullOrWhiteSpace(key)) 
-                {
-                    throw new InvalidOperationException("cannot set data item or key to null");
-                }
-
-                var localValue = _localDataPoint[key];
-                if (localValue != null)
-                {
-                    localValue.SetSupported(value);
-
-                    if (!_localDataPoint.Update(localValue))
-                    {
-                        throw new Exception("Could not update datapoint");
-                    }
-                }
-                else
-                {
-                    // TODO: check and eventually update network value
-                }
             }
         }
 

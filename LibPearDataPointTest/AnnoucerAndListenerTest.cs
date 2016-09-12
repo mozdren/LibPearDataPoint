@@ -10,6 +10,8 @@ namespace LibPearDataPointTest
         [TestMethod]
         public void AnnounceAndListenTest()
         {
+            Pear.Data.Deinit();
+
             var dataPoint = new LocalDataPoint();
             Assert.IsTrue(dataPoint.Create(new DataItem {Name = "first1", Value = "1"}));
             Assert.IsTrue(dataPoint.Create(new DataItem {Name = "second2", Value = "2" }));
@@ -25,6 +27,8 @@ namespace LibPearDataPointTest
             Assert.IsTrue(names.Count == 2);
             Assert.IsTrue(names.Contains("first1"));
             Assert.IsTrue(names.Contains("second2"));
+
+            Pear.Data.Deinit();
         }
     }
 }

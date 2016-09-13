@@ -21,6 +21,13 @@ namespace LibPearDataPoint
         /// <returns></returns>
         internal static DataItem GetDataItem(IPEndPoint endpoint, string name)
         {
+            if(!Utils.IsNameValid(name))
+            {
+                // invalid name was requested
+                Trace.WriteLine(string.Format("GetDataItem: Ivalid name {0}", name ?? "null"));
+                return null;
+            }
+
             try
             {
                 using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
@@ -98,8 +105,75 @@ namespace LibPearDataPoint
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(string.Format("Exception when getting item {0} from {1} (Exception: {2})", name ?? string.Empty, endpoint, ex));
+                Trace.WriteLine(string.Format("Exception when getting item {0} from {1} (Exception: {2})", name ?? string.Empty, endpoint, ex.Message));
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Updates distant dataitem
+        /// </summary>
+        /// <param name="endpoint">enpoint where the dataitem iterface service is provided</param>
+        /// <param name="name">name of the dataitem to be updated</param>
+        /// <param name="value">new value of the dataitem</param>
+        /// <returns></returns>
+        internal static bool UpdateDataItem(IPEndPoint endpoint, string name, string value)
+        {
+            if (!Utils.IsNameValid(name))
+            {
+                // invalid name was requested
+                Trace.WriteLine(string.Format("UpdateDataItem: Ivalid name {0}", name ?? "null"));
+                return false;
+            }
+
+            try
+            {
+                using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+                {
+                    socket.Connect(endpoint);
+                    socket.NoDelay = true;
+
+                    using (var networkStream = new NetworkStream(socket))
+                    using (var streamWriter = new StreamWriter(networkStream))
+                    using (var streamReader = new StreamReader(networkStream))
+                    {
+                        streamWriter.AutoFlush = true;
+                        streamWriter.WriteLine("{0};{1};{2}", GlobalConstants.Commands.Update, name, value);
+                        var receivedData = streamReader.ReadLine();
+
+                        if (string.IsNullOrWhiteSpace(receivedData))
+                        {
+                            Trace.WriteLine("received empty response");
+                            return false;
+                        }
+
+                        if (receivedData.StartsWith("OK")) // ok message was received
+                        {
+                            return true;
+                        }
+
+                        var errorMessageData = receivedData.Split(';');
+                        if (errorMessageData.Length <= 1)
+                        {
+                            Trace.WriteLine("Unknown Error when updating dataitem");
+                            return false;
+                        }
+
+                        if (errorMessageData.Length == 2)
+                        {
+                            Trace.WriteLine(string.Format("Error when updating dataitem: {0}", errorMessageData[1]));
+                            return false;
+                        }
+
+                        Trace.WriteLine(string.Format("Response format incorrect {0}", receivedData));
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(string.Format("Exception when updating item {0} from {1} (Exception: {2})", name ?? string.Empty, endpoint, ex.Message));
+                return false;
             }
         }
     }

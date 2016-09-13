@@ -34,7 +34,7 @@
         internal static class Commands
         {
             internal const string Get = "GET";
-            internal const string Set = "SET";
+            internal const string Update = "UPDATE";
         }
     }
 }

@@ -180,7 +180,11 @@ namespace LibPearDataPoint
                 return false;
             }
 
-            // TODO: do the same check for network value
+            // if someone already announced having item with specified key, then we cannot create new
+            if (_announcementListener.GetNames().Contains(key))
+            {
+                return false;
+            }
 
             // if it doesn't exist locally or even over network, then we are allowed to create data item in local datapoint
             var dataItem = new DataItem { Name = key };
@@ -212,7 +216,17 @@ namespace LibPearDataPoint
                 return _localDataPoint.Update(dataItem);
             }
 
-            // TODO: if not exists localy, then check existence in distant endpoints
+            // if distant data item exists, we have to update it
+            if (_announcementListener.GetNames().Contains(key))
+            {
+                var dataItem = new DataItem {Name = key};
+                dataItem.SetSupported(value);
+
+                return _announcementListener
+                       .GetEndpoints(key)
+                       .Select(ipEndPoint => DataPointServiceClient.UpdateDataItem(ipEndPoint, key, dataItem.Value))
+                       .FirstOrDefault(result => result);
+            }
 
             return false;
         }

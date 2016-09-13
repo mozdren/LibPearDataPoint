@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -200,7 +201,7 @@ namespace LibPearDataPoint
                 }
 
                 var splittedCommand = requestCommand.Split(';');
-                if (splittedCommand.Length != 2)
+                if (splittedCommand.Length < 2)
                 {
                     WriteErrorResponse(writer, "request did not have correct format");
                     Trace.WriteLine(string.Format("Request did not have correct format (request:{0})", requestCommand));
@@ -210,10 +211,10 @@ namespace LibPearDataPoint
                 switch (splittedCommand[0].Trim())
                 {
                     case GlobalConstants.Commands.Get:
-                        WriteGetResponse(writer, splittedCommand[1]);
+                        ProcessGet(writer, splittedCommand[1]);
                         break;
-                    case GlobalConstants.Commands.Set:
-                        WriteSetResponse(writer, splittedCommand[1]);
+                    case GlobalConstants.Commands.Update:
+                        ProcessUpdate(writer, splittedCommand.Skip(1));
                         break;
                     default:
                         WriteUnknownCommandResponse(writer);
@@ -247,7 +248,7 @@ namespace LibPearDataPoint
         /// </summary>
         /// <param name="writer">stream writer</param>
         /// <param name="name">data item name</param>
-        private void WriteGetResponse(StreamWriter writer, string name)
+        private void ProcessGet(StreamWriter writer, string name)
         {
             var item = _localDataPoint[name];
             if (item == null) // item was not found, and we return error
@@ -264,9 +265,42 @@ namespace LibPearDataPoint
         /// </summary>
         /// <param name="writer">stream writer</param>
         /// <param name="parameters">parameters</param>
-        private void WriteSetResponse(StreamWriter writer, string parameters)
+        private void ProcessUpdate(StreamWriter writer, IEnumerable<string> parameters)
         {
-            writer.WriteLine("NOK;Not implemented");
+            // enought parameters?
+            var updateParams = parameters.ToArray();
+            if (updateParams.Length < 2)
+            {
+                writer.WriteLine("NOK;wrong parameters");
+            }
+
+            // is name valid?
+            var name = updateParams[0];
+            if (!Utils.IsNameValid(name))
+            {
+                writer.WriteLine("NOK;Invalid name");
+            }
+
+            // does local dataitem exist
+            var dataItem = _localDataPoint[name];
+            if (dataItem == null)
+            {
+                writer.WriteLine("NOK;dataitem does not exist");
+            }
+
+            // get data to be set
+            var data = string.Join(";", updateParams.Skip(1));
+            dataItem.Set(data);
+
+            // try to update value
+            if (_localDataPoint.Update(dataItem))
+            {
+                writer.WriteLine("OK;item updated");
+                return;
+            }
+
+            // could not update, return error
+            writer.WriteLine("NOK;item update failed");
         }
     }
 }

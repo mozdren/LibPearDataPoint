@@ -49,6 +49,15 @@ namespace LibPearDataPointTest
             Assert.IsFalse(itemFromService.IsLocal);
             Assert.IsTrue(itemFromService.Name.Equals("test1"));
 
+            Assert.IsTrue(DataPointServiceClient.UpdateDataItem(endpoint, "test1", "very;specific;new;value"));
+
+            itemFromService = DataPointServiceClient.GetDataItem(endpoint, "test1");
+            Assert.IsTrue(itemFromService != null);
+
+            Assert.IsTrue(itemFromService.Value.Equals("very;specific;new;value"));
+            Assert.IsFalse(itemFromService.IsLocal);
+            Assert.IsTrue(itemFromService.Name.Equals("test1"));
+
             service.StopService();
 
             Pear.Data.Deinit(); // cleanup after

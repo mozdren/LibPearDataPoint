@@ -17,8 +17,6 @@ namespace LibPearDataPointTest
         [TestMethod]
         public void DataPointServiceAndClientTest()
         {
-            Pear.Data.Deinit(); // cleanup before start
-
             var dataPoint = new LocalDataPoint();
 
             dataPoint.Create(new DataItem
@@ -59,8 +57,6 @@ namespace LibPearDataPointTest
             Assert.IsTrue(itemFromService.Name.Equals("test1"));
 
             service.StopService();
-
-            Pear.Data.Deinit(); // cleanup after
         }
 
         /// <summary>
@@ -87,7 +83,8 @@ namespace LibPearDataPointTest
             itemFromService = DataPointServiceClient.GetDataItem(endpoint, "nonexistingdataitem");
             Assert.IsTrue(itemFromService == null);
 
-            Pear.Data.Deinit();
+            // cleanup
+            Pear.Data.Clear();
         }
     }
 }

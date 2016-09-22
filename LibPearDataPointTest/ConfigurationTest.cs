@@ -67,8 +67,7 @@ namespace LibPearDataPointTest
             Assert.IsTrue(configuration.BroadcastPortNumber != 0);
             Assert.IsTrue(configuration.PortNumberRange.Item1 != 0);
             Assert.IsTrue(configuration.PortNumberRange.Item2 != 0);
-            Assert.IsTrue(configuration.PortNumberRange.Item1 <=
-                          configuration.PortNumberRange.Item2);
+            Assert.IsTrue(configuration.PortNumberRange.Item1 <= configuration.PortNumberRange.Item2);
             Assert.IsTrue(configuration.MaxPortNumber != 0);
             Assert.IsTrue(configuration.MinPortNumber != 0);
             Assert.IsTrue(configuration.AnnouncingInterval != 0);

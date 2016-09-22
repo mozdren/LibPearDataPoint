@@ -13,11 +13,11 @@ namespace LibPearDataPoint
         /// <summary>
         /// A constant for tracer - tracer uses it in traces to identify orign of the traces
         /// </summary>
-        private const string TracerConstant = "LocalDataPoint";
+        private const string TracerConstant = "PearLocalDataPoint";
 
         #endregion
 
-        #region Private Fields
+        #region Fields and Properties
 
         /// <summary>
         /// DataItem collection (Dictionary).
@@ -31,7 +31,34 @@ namespace LibPearDataPoint
 
         #endregion
 
-        #region Main Methods
+        #region Overloaded Operators
+        
+        /// <summary>
+        /// Indexing items using the string key value as the index
+        /// </summary>
+        /// <param name="key">key identifier of the dataitem</param>
+        /// <returns>Data item if found, null othervise</returns>
+        internal DataItem this[string key]
+        {
+            get
+            {
+                lock (_dataManipulationLock)
+                {
+                    // Key should have value, and also should exist in _localDataItems
+                    if (string.IsNullOrWhiteSpace(key) || !_localDataItems.ContainsKey(key))
+                    {
+                        return null;
+                    }
+
+                    // all OK, let's return the item
+                    return _localDataItems[key].Clone() as DataItem;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Creates an item in a local dataset
@@ -147,37 +174,6 @@ namespace LibPearDataPoint
             return _localDataItems.Values.Select(item => item.Clone() as DataItem).GetEnumerator();
         }
 
-        #endregion
-
-        #region Overloaded Operators
-        
-        /// <summary>
-        /// Indexing items using the string key value as the index
-        /// </summary>
-        /// <param name="key">key identifier of the dataitem</param>
-        /// <returns>Data item if found, null othervise</returns>
-        internal DataItem this[string key]
-        {
-            get
-            {
-                lock (_dataManipulationLock)
-                {
-                    // Key should have value, and also should exist in _localDataItems
-                    if (string.IsNullOrWhiteSpace(key) || !_localDataItems.ContainsKey(key))
-                    {
-                        return null;
-                    }
-
-                    // all OK, let's return the item
-                    return _localDataItems[key].Clone() as DataItem;
-                }
-            }
-        }
-
-        #endregion
-
-        #region Private Methods
-
         /// <summary>
         /// Validates DataItem object and returns its clone if all mandatory conditions are fulfilled
         /// </summary>
@@ -217,6 +213,17 @@ namespace LibPearDataPoint
 
             // validated, let's return validated clone
             return workItem;
+        }
+
+        /// <summary>
+        /// Clears the collection of local datapoints
+        /// </summary>
+        public void Clear()
+        {
+            lock (_dataManipulationLock)
+            {
+                _localDataItems.Clear();
+            }
         }
 
         #endregion

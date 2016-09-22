@@ -7,12 +7,13 @@ namespace LibPearDataPointTest
     public class DataItemTest
     {
         /// <summary>
-        /// Datas the item initialization test. We would like to ensure, that the data
+        /// Dataitem initialization test. We would like to ensure, that the data
         /// are stored as is, no changes are done during initialization.
         /// </summary>
         [TestMethod]
         public void DataItemInitializationTest()
         {
+            // create dataitem
             var dataItem = new LibPearDataPoint.DataItem
             {
                 IsLocal = true,
@@ -31,6 +32,7 @@ namespace LibPearDataPointTest
             Assert.IsFalse(dataItem.Name == "BIRTHDAY");
             Assert.IsTrue(dataItem.Value == "19851111");
 
+            // create second dataitem
             var dataItem2 = new LibPearDataPoint.DataItem
             {
                 IsLocal = false,

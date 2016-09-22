@@ -10,10 +10,21 @@ using System.Threading;
 namespace LibPearDataPoint
 {
     /// <summary>
-    /// DataPointService is a service that should run over every DataPoint and provide data to client (Pear) DataPoints
+    /// PearDataPointService is a service that should run over every DataPoint and provide data to client (Pear) DataPoints
     /// </summary>
     internal class DataPointService
     {
+        #region Private Constants
+
+        /// <summary>
+        /// String that should be added to tracer output
+        /// </summary>
+        private const string TracerConstant = "DataPointService";
+
+        #endregion
+
+        #region Fields and Properties
+
         /// <summary>
         /// Randomizer
         /// </summary>
@@ -32,12 +43,21 @@ namespace LibPearDataPoint
         /// <summary>
         /// A datapoint for which the data are provided
         /// </summary>
-        private LocalDataPoint _localDataPoint;
+        private readonly LocalDataPoint _localDataPoint;
+
+        /// <summary>
+        /// is true if service accepts new connections
+        /// </summary>
+        private bool _isAccepting;
 
         /// <summary>
         /// Property showing which port is being used to run the service
         /// </summary>
         internal int ServicePort { get; private set; }
+
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// A constructor that expects the datapoint instance as a parameter
@@ -48,38 +68,45 @@ namespace LibPearDataPoint
             _localDataPoint = localDataPoint;
         }
 
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// Starting service with a specific port, or selects port according to configuration
         /// </summary>
         /// <param name="port">port number to be used for service, or 0 if range should be used</param>
         internal void StartService(int port = 0)
         {
+            _isAccepting = true;
             _serviceSocket = GetServiceSocket(port);
 
             if (_serviceSocket == null)
             {
-                Trace.WriteLine("Could not create service socket. Aborting!");
+                Trace.WriteLine(string.Format("{0} Could not create service socket. Aborting!", TracerConstant));
                 return;
             }
 
             _serviceThread = new Thread(threadCode =>
             {
-                while (true)
+                while (_isAccepting)
                 {
                     try
                     {
-                        var clientSocket = _serviceSocket.Accept();
-                        new Thread(ProcessServiceClient).Start(clientSocket);
+                        var asyncResult = _serviceSocket.BeginAccept(ProcessServiceClient, null);
+                        asyncResult.AsyncWaitHandle.WaitOne(1000);
                     }
                     catch (Exception ex)
                     {
                         // We log the exception, but we continue accept connection no matter what
-                        Trace.WriteLine(string.Format("Exception when listening to clients (ex: {0})", ex.Message));
+                        Trace.WriteLine(string.Format("{0} Exception when listening to clients (ex: {1})", TracerConstant, ex.Message));
                     }
                 }
-                // ReSharper disable once FunctionNeverReturns
+
+                Trace.WriteLine(string.Format("{0} End of Service", TracerConstant));
             });
 
+            _serviceThread.Name = "DataPoint Service Thread";
             _serviceThread.Start();
         }
 
@@ -88,22 +115,18 @@ namespace LibPearDataPoint
         /// </summary>
         internal void StopService()
         {
+            _isAccepting = false;
+
             try
             {
-                _serviceSocket.Close();
+                if (_serviceSocket != null && _serviceSocket.Connected)
+                {
+                    _serviceSocket.Shutdown(SocketShutdown.Both);
+                }
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(string.Format("Closing service socket exception (ex: {0})", ex.Message));
-            }
-            
-            try
-            {
-                _serviceThread.Abort();
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(string.Format("Could not abort service thread (ex: {0})", ex.Message));
+                Trace.WriteLine(string.Format("{0} Closing service socket exception (ex: {1})", TracerConstant, ex.Message));
             }
         }
 
@@ -118,9 +141,9 @@ namespace LibPearDataPoint
             {
                 try
                 {
+                    var endPoint = new IPEndPoint(new IPAddress(new byte[] { 0, 0, 0, 0 }), port);
                     var newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     newSocket.NoDelay = true;
-                    var endPoint = new IPEndPoint(new IPAddress(new byte[] { 0, 0, 0, 0 }), port);
                     newSocket.Bind(endPoint);
                     newSocket.Listen(100);
                     ServicePort = port;
@@ -128,7 +151,7 @@ namespace LibPearDataPoint
                 }
                 catch (Exception ex)
                 {
-                    Trace.WriteLine(string.Format("Could not create Socket. The port is probably already occupied by another application, or you don't have rights to create the port (PORT:{0}, exception: {1})", port, ex.Message));
+                    Trace.WriteLine(string.Format("{0} Could not create Socket. The port is probably already occupied by another application, or you don't have rights to create the port (PORT:{1}, exception: {2})", TracerConstant, port, ex.Message));
                     return null;
                 }
             }
@@ -158,7 +181,7 @@ namespace LibPearDataPoint
                 }
                 catch (Exception ex)
                 {
-                    Trace.WriteLine(string.Format("Could not create Socket. The port is probably already occupied by another application, or you don't have rights to create the port (PORT:{0}, exception: {1})", newPortNumber, ex.Message));
+                    Trace.WriteLine(string.Format("{0} Could not create Socket. The port is probably already occupied by another application, or you don't have rights to create the port (PORT:{1}, exception: {2})", TracerConstant, newPortNumber, ex.Message));
                     ocupiedPorts.Add(newPortNumber);
                 }
 
@@ -174,52 +197,57 @@ namespace LibPearDataPoint
         }
 
         /// <summary>
-        /// Processing request of a client (GET, SET)
+        /// Processing request of a client (GET, SET, etc.)
         /// </summary>
-        /// <param name="clientSocketObject"></param>
-        private void ProcessServiceClient(object clientSocketObject)
+        /// <param name="clientSocketAsyncResult">asynchronous result from socket client connection</param>
+        private void ProcessServiceClient(IAsyncResult clientSocketAsyncResult)
         {
-            var clientSocket = clientSocketObject as Socket;
-            if (clientSocket == null)
+            if (clientSocketAsyncResult.IsCompleted)
             {
-                Trace.WriteLine("Client Processing Thread did get Socket object as a parameter");
-                return;
-            }
-
-            using (var networkStream = new NetworkStream(clientSocket))
-            using (var reader = new StreamReader(networkStream))
-            using (var writer = new StreamWriter(networkStream))
-            {
-                writer.AutoFlush = true;
-                var requestCommand = reader.ReadLine();
-
-                if (string.IsNullOrWhiteSpace(requestCommand))
+                using (var clientSocket = _serviceSocket.EndAccept(clientSocketAsyncResult))
                 {
-                    Trace.WriteLine("Empty request message was received");
-                    WriteErrorResponse(writer, "request command was empty");
-                    return;
-                }
-
-                var splittedCommand = requestCommand.Split(';');
-                if (splittedCommand.Length < 2)
-                {
-                    WriteErrorResponse(writer, "request did not have correct format");
-                    Trace.WriteLine(string.Format("Request did not have correct format (request:{0})", requestCommand));
-                    return;
-                }
-
-                switch (splittedCommand[0].Trim())
-                {
-                    case GlobalConstants.Commands.Get:
-                        ProcessGet(writer, splittedCommand[1]);
-                        break;
-                    case GlobalConstants.Commands.Update:
-                        ProcessUpdate(writer, splittedCommand.Skip(1));
-                        break;
-                    default:
-                        WriteUnknownCommandResponse(writer);
-                        Trace.WriteLine(string.Format("Unknown command was requested (Request: {0})", requestCommand));
+                    if (clientSocket == null)
+                    {
+                        Trace.WriteLine(string.Format("{0} Client Processing Thread did not get Socket object as a parameter", TracerConstant));
                         return;
+                    }
+
+                    using (var networkStream = new NetworkStream(clientSocket))
+                    using (var reader = new StreamReader(networkStream))
+                    using (var writer = new StreamWriter(networkStream))
+                    {
+                        writer.AutoFlush = true;
+                        var requestCommand = reader.ReadLine();
+
+                        if (string.IsNullOrWhiteSpace(requestCommand))
+                        {
+                            Trace.WriteLine("Empty request message was received");
+                            WriteErrorResponse(writer, "request command was empty");
+                            return;
+                        }
+
+                        var splittedCommand = requestCommand.Split(';');
+                        if (splittedCommand.Length < 2)
+                        {
+                            WriteErrorResponse(writer, "request did not have correct format");
+                            Trace.WriteLine(string.Format("{0} Request did not have correct format (request:{1})", TracerConstant, requestCommand));
+                            return;
+                        }
+
+                        switch (splittedCommand[0].Trim())
+                        {
+                            case GlobalConstants.Commands.Get:
+                                ProcessGet(writer, splittedCommand[1]);
+                                break;
+                            case GlobalConstants.Commands.Update:
+                                ProcessUpdate(writer, splittedCommand.Skip(1));
+                                break;
+                            default:
+                                WriteUnknownCommandResponse(writer);
+                                Trace.WriteLine(string.Format("{0} Unknown command was requested (Request: {1})", TracerConstant, requestCommand));
+                                return;
+                        }
+                    }
                 }
             }
         }
@@ -248,7 +276,7 @@ namespace LibPearDataPoint
         /// </summary>
         /// <param name="writer">stream writer</param>
         /// <param name="name">data item name</param>
-        private void ProcessGet(StreamWriter writer, string name)
+        private void ProcessGet(TextWriter writer, string name)
         {
             var item = _localDataPoint[name];
             if (item == null) // item was not found, and we return error
@@ -265,7 +293,7 @@ namespace LibPearDataPoint
         /// </summary>
         /// <param name="writer">stream writer</param>
         /// <param name="parameters">parameters</param>
-        private void ProcessUpdate(StreamWriter writer, IEnumerable<string> parameters)
+        private void ProcessUpdate(TextWriter writer, IEnumerable<string> parameters)
         {
             // enought parameters?
             var updateParams = parameters.ToArray();
@@ -302,5 +330,8 @@ namespace LibPearDataPoint
             // could not update, return error
             writer.WriteLine("NOK;item update failed");
         }
+
+        #endregion
+
     }
 }

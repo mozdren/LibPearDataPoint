@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace LibPearDataPoint
 {
@@ -10,46 +11,51 @@ namespace LibPearDataPoint
     /// </summary>
     public class Pear : IEnumerable<DataItem>
     {
-        #region private fields
+        #region Private Constants
+
+        /// <summary>
+        /// String that should be added to tracer output
+        /// </summary>
+        private const string TracerConstant = "AnnoucementListener";
+
+        #endregion
+
+        #region Fields and Properties
 
         /// <summary>
         /// Local Datapoint - this is an entry point for data that are stored localy
         /// </summary>
-        private LocalDataPoint _localDataPoint = new LocalDataPoint();
+        internal LocalDataPoint PearLocalDataPoint = new LocalDataPoint();
 
         /// <summary>
         /// Basic Local Configuration - configuration stored in Configuration.Basic.xml
         /// </summary>
-        private readonly Configuration _basicConfiguration = new Configuration("Configuration.xml");
+        internal readonly Configuration PearBasicConfiguration = new Configuration("Configuration.xml");
 
         /// <summary>
         /// Service providing data for datapoint clients
         /// </summary>
-        private DataPointService _dataPointService;
+        internal DataPointService PearDataPointService;
 
         /// <summary>
         /// announcer - announcing local data items
         /// </summary>
-        private Announcer _announcer;
+        internal Announcer PearAnnouncer;
 
         /// <summary>
         /// Annoucment listener listens to annoucments of distant datapoints and keeps track of them
         /// </summary>
-        private AnnouncementListener _announcementListener;
+        internal AnnouncementListener PearAnnouncementListener;
 
         /// <summary>
         /// Singleton of a pear object
         /// </summary>
-        private static Pear _pearData = new Pear();
-
-        #endregion
-
-        #region Public Properties
+        internal static Pear PearData = new Pear();
 
         /// <summary>
         /// Basic configuration property
         /// </summary>
-        public static Configuration Configuration { get { return Data._basicConfiguration; } }
+        public static Configuration Configuration { get { return Data.PearBasicConfiguration; } }
 
         /// <summary>
         /// A singleton getter - there is only one instance of this class in a whole application
@@ -57,34 +63,30 @@ namespace LibPearDataPoint
         public static Pear Data {
             get
             {
-                if (_pearData._dataPointService == null)
+                if (PearData.PearDataPointService == null)
                 {
-                    _pearData.Init();
+                    PearData.Init();
                 }
-                return _pearData;
+                return PearData;
             }
         }
 
         /// <summary>
         /// count of dataitems stored localy
         /// </summary>
-        public static int CountLocal { get { return Data._localDataPoint.Count(); } }
-
-        #endregion
-
-        #region Internal Properties
+        public static int CountLocal { get { return Data.PearLocalDataPoint.Count(); } }
 
         /// <summary>
         /// This propertie should return a service port on which the data are provided.
         /// Eeach DataPoint should have only one service.
         /// </summary>
         internal static int ServicePort {
-            get { return Data._dataPointService.ServicePort; }
+            get { return Data.PearDataPointService.ServicePort; }
         }
 
         #endregion
 
-        #region Constructors
+        #region Constructors and Destructors
 
         /// <summary>
         /// There can be only one instance of this class
@@ -95,15 +97,28 @@ namespace LibPearDataPoint
         }
 
         /// <summary>
+        /// Destructor - stops services
+        /// </summary>
+        ~Pear()
+        {
+            Deinit();
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
         /// Initialization of the internal modules
         /// </summary>
         internal void Init()
         {
-            _dataPointService = new DataPointService(_localDataPoint);
-            _announcer = new Announcer(_localDataPoint);
-            _announcementListener = new AnnouncementListener();
-            _announcer.StartAnnouncing();
-            _dataPointService.StartService();
+            PearDataPointService = new DataPointService(PearLocalDataPoint);
+            PearAnnouncer = new Announcer(PearLocalDataPoint);
+            PearAnnouncementListener = new AnnouncementListener();
+            PearAnnouncer.StartAnnouncing();
+            PearDataPointService.StartService();
+            PearAnnouncementListener.StartListening();
         }
 
         /// <summary>
@@ -114,41 +129,31 @@ namespace LibPearDataPoint
             try
             {
                 // Stop all modules first
-                if (_announcer != null)
+                if (PearAnnouncer != null)
                 {
-                    _announcer.StopAnnouncing();
+                    PearAnnouncer.StopAnnouncing();
                 }
 
-                if (_announcementListener != null)
+                if (PearAnnouncementListener != null)
                 {
-                    _announcementListener.StopListening();
+                    PearAnnouncementListener.StopListening();
                 }
 
-                if (_dataPointService != null)
+                if (PearDataPointService != null)
                 {
-                    _dataPointService.StopService();
+                    PearDataPointService.StopService();
                 }
 
                 // Set all modules to null, so the GC can collect and next init works properly
-                _announcer = null;
-                _announcementListener = null;
-                _dataPointService = null;
+                PearAnnouncer = null;
+                PearAnnouncementListener = null;
+                PearDataPointService = null;
             }
             catch (KeyNotFoundException ex)
             {
-                Trace.WriteLine(string.Format("Exception when shutting down modules: {0}", ex.Message));
+                Trace.WriteLine(string.Format("{0} Exception when shutting down modules: {1}", TracerConstant, ex.Message));
             }
         }
-
-        /// <summary>
-        /// Destructor - stops services
-        /// </summary>
-        ~Pear()
-        {
-            Deinit();
-        }
-        
-        #endregion
 
         /// <summary>
         /// Create a datapoint with empty data value
@@ -175,13 +180,13 @@ namespace LibPearDataPoint
             }
             
             // check if exists localy
-            if (_localDataPoint[key] != null)
+            if (PearLocalDataPoint[key] != null)
             {
                 return false;
             }
 
             // if someone already announced having item with specified key, then we cannot create new
-            if (_announcementListener.GetNames().Contains(key))
+            if (PearAnnouncementListener.GetNames().Contains(key))
             {
                 return false;
             }
@@ -190,7 +195,7 @@ namespace LibPearDataPoint
             var dataItem = new DataItem { Name = key };
             dataItem.SetSupported(value);
 
-            return _localDataPoint.Create(dataItem);
+            return PearLocalDataPoint.Create(dataItem);
         }
 
         /// <summary>
@@ -209,20 +214,20 @@ namespace LibPearDataPoint
             }
 
             // check if exists localy
-            if (_localDataPoint[key] != null)
+            if (PearLocalDataPoint[key] != null)
             {
                 var dataItem = new DataItem { Name = key };
                 dataItem.SetSupported(value);
-                return _localDataPoint.Update(dataItem);
+                return PearLocalDataPoint.Update(dataItem);
             }
 
             // if distant data item exists, we have to update it
-            if (_announcementListener.GetNames().Contains(key))
+            if (PearAnnouncementListener.GetNames().Contains(key))
             {
                 var dataItem = new DataItem {Name = key};
                 dataItem.SetSupported(value);
 
-                return _announcementListener
+                return PearAnnouncementListener
                        .GetEndpoints(key)
                        .Select(ipEndPoint => DataPointServiceClient.UpdateDataItem(ipEndPoint, key, dataItem.Value))
                        .FirstOrDefault(result => result);
@@ -241,17 +246,17 @@ namespace LibPearDataPoint
             get
             {
                 // exists localy?
-                var localValue = _localDataPoint[key];
+                var localValue = PearLocalDataPoint[key];
                 if (localValue != null)
                 {
                     return localValue;
                 }
 
                 // exists in distant datapoint?
-                if (_announcementListener.GetNames().Contains(key))
+                if (PearAnnouncementListener.GetNames().Contains(key))
                 {
                     return 
-                        _announcementListener
+                        PearAnnouncementListener
                         .GetEndpoints(key)
                         .Select(ipEndPoint => DataPointServiceClient.GetDataItem(ipEndPoint, key))
                         .FirstOrDefault(dataItem => dataItem != null);
@@ -275,13 +280,22 @@ namespace LibPearDataPoint
             }
 
             // check if exists localy
-            var item = _localDataPoint[key];
+            var item = PearLocalDataPoint[key];
             if (item == null)
             {
                 return false;
             }
 
-            return _localDataPoint.Remove(item);
+            return PearLocalDataPoint.Remove(item);
+        }
+
+        /// <summary>
+        /// Clears collection of local datapoints and distant datapoints
+        /// </summary>
+        public void Clear()
+        {
+            PearLocalDataPoint.Clear();
+            PearAnnouncementListener.Clear();
         }
 
         /// <summary>
@@ -290,7 +304,7 @@ namespace LibPearDataPoint
         /// <returns>local dataitems enumerator</returns>
         public IEnumerator<DataItem> GetEnumerator()
         {
-            return ((IEnumerable<DataItem>)_localDataPoint).GetEnumerator();
+            return ((IEnumerable<DataItem>)PearLocalDataPoint).GetEnumerator();
         }
 
         /// <summary>
@@ -299,7 +313,10 @@ namespace LibPearDataPoint
         /// <returns>local dataitems enumerator</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable<DataItem>)_localDataPoint).GetEnumerator();
+            return ((IEnumerable<DataItem>)PearLocalDataPoint).GetEnumerator();
         }
+
+        #endregion
+
     }
 }

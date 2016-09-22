@@ -9,6 +9,8 @@ namespace LibPearDataPoint
     [DataContract]
     public partial class DataItem : ICloneable
     {
+        #region Fields and Properties
+
         /// <summary>
         /// Gets or sets the name. The name should be unique over Ethernet
         /// </summary>
@@ -54,6 +56,10 @@ namespace LibPearDataPoint
         /// </value>
         public bool IsLocal { get; set; }
 
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// This method returns an exact clone of itself
         /// </summary>
@@ -78,5 +84,8 @@ namespace LibPearDataPoint
         {
             return Value;
         }
+
+        #endregion
+
     }
 }

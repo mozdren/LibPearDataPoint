@@ -14,6 +14,15 @@ namespace LibPearDataPoint
     /// </summary>
     internal class AnnouncementListener
     {
+        #region Private Constants
+
+        /// <summary>
+        /// String that should be added to tracer output
+        /// </summary>
+        private const string TracerConstant = "AnnoucementListener";
+
+        #endregion
+
         #region private fields
 
         /// <summary>
@@ -27,11 +36,37 @@ namespace LibPearDataPoint
         private Thread _listeningThread;
 
         /// <summary>
+        /// a custom port to listen to
+        /// </summary>
+        private readonly int _customPort;
+
+        /// <summary>
         /// Lock for synchronous reading and writing of distant datapoints information
         /// </summary>
         private readonly object _lock = new object();
 
+        /// <summary>
+        /// udp client object
+        /// </summary>
+        private UdpClient _client;
+
+        /// <summary>
+        /// is true if can listen to announcments
+        /// </summary>
+        private bool _isListening;
+
         #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Constructor, allowing to set custom port number
+        /// </summary>
+        /// <param name="customPort"></param>
+        internal AnnouncementListener(int customPort = 0)
+        {
+            _customPort = customPort;
+        }
 
         /// <summary>
         /// returns datapoints for a specific datapoint name
@@ -70,25 +105,24 @@ namespace LibPearDataPoint
         /// </summary>
         internal void StartListening()
         {
+            _isListening = true;
 
             _listeningThread = new Thread(threadDelegate =>
             {
-                using (var client = new UdpClient(Pear.Configuration.BroadcastPortNumber))
+                using (_client = new UdpClient())
                 {
-                    var endpoint = new IPEndPoint(IPAddress.Any, Pear.Configuration.BroadcastPortNumber);
+                    var endpoint = _customPort != 0
+                        ? new IPEndPoint(Pear.Configuration.BroadcastAddress, _customPort)
+                        : new IPEndPoint(Pear.Configuration.BroadcastAddress, Pear.Configuration.BroadcastPortNumber);
 
-                    while (true)
+                    _client.ExclusiveAddressUse = false;
+                    _client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                    _client.Client.Bind(endpoint);
+                    _client.Connect(endpoint);
+
+                    while (_isListening)
                     {
-                        // get the data from broadcast using async methods with timeout
-                        var dataAsincResult = client.BeginReceive(null, null);
-                        dataAsincResult.AsyncWaitHandle.WaitOne(1000);
-                        if (!dataAsincResult.IsCompleted) // has the operation completed?
-                        {
-                            continue;
-                        }
-
-                        // result received
-                        var data = client.EndReceive(dataAsincResult, ref endpoint);
+                        var data = _client.Receive(ref endpoint);
                         var messageString = Encoding.ASCII.GetString(data);
 
                         lock (_lock)
@@ -107,15 +141,15 @@ namespace LibPearDataPoint
                             List<IPEndPoint> endpoints = new List<IPEndPoint>();
 
                             // parse endpoints
-                            foreach (var endpointData in from endpointString 
-                                     in splittedData[0].Split(';')
-                                     where !string.IsNullOrWhiteSpace(endpointString)
-                                     select endpointString.Split(':') 
-                                     into endpointData
-                                     where endpointData.Length == 2 &&
-                                           !string.IsNullOrWhiteSpace(endpointData[0]) &&
-                                           !string.IsNullOrWhiteSpace(endpointData[1])
-                                     select endpointData)
+                            foreach (var endpointData in from endpointString
+                                in splittedData[0].Split(';')
+                                where !string.IsNullOrWhiteSpace(endpointString)
+                                select endpointString.Split(':')
+                                into endpointData
+                                where endpointData.Length == 2 &&
+                                      !string.IsNullOrWhiteSpace(endpointData[0]) &&
+                                      !string.IsNullOrWhiteSpace(endpointData[1])
+                                select endpointData)
                             {
                                 IPAddress ipAddress;
                                 int port;
@@ -132,7 +166,6 @@ namespace LibPearDataPoint
                             {
                                 if (!_distantDataPoints.ContainsKey(item))
                                 {
-                                    
                                     _distantDataPoints.Add(item, endpoints); // new dataitem discovered
                                 }
                                 else
@@ -143,7 +176,8 @@ namespace LibPearDataPoint
                         }
                     }
                 }
-                // ReSharper disable once FunctionNeverReturns
+
+                Trace.WriteLine(string.Format("{0} End of Listening", TracerConstant));
             });
 
             _listeningThread.Start();
@@ -154,16 +188,35 @@ namespace LibPearDataPoint
         /// </summary>
         internal void StopListening()
         {
+            _isListening = false;
+
             try
             {
-                _listeningThread.Abort();
+                if (_client != null && _client.Client != null)
+                {
+                    _client.Client.Shutdown(SocketShutdown.Both);
+                }
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(string.Format("Thread abortion exception {0}", ex.Message));
+                Trace.WriteLine(string.Format(" abortion exception {0}", ex.Message));
                 // It doesnot matter what happens, but the thread has to be aborted and application
                 // should not die
             }
-        } 
+        }
+
+        /// <summary>
+        /// Clears list of distant endpoints and its datapoints
+        /// </summary>
+        internal void Clear()
+        {
+            lock (_lock)
+            {
+                _distantDataPoints.Clear();
+            }
+        }
+
+        #endregion
+
     }
 }

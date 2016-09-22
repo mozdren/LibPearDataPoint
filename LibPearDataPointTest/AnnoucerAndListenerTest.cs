@@ -4,31 +4,32 @@ using LibPearDataPoint;
 
 namespace LibPearDataPointTest
 {
+    /// <summary>
+    /// This class represents test for Announcer and AnnoucmentListener classes
+    /// </summary>
     [TestClass]
     public class AnnoucerAndListenerTest
     {
+        /// <summary>
+        /// Pear object registers two data items and those should be recognized by announcer
+        /// </summary>
         [TestMethod]
         public void AnnounceAndListenTest()
         {
-            Pear.Data.Deinit();
+            // create dataitems
+            Assert.IsTrue(Pear.Data.Create("first1", "1"));
+            Assert.IsTrue(Pear.Data.Create("second2", "2"));
 
-            var dataPoint = new LocalDataPoint();
-            Assert.IsTrue(dataPoint.Create(new DataItem {Name = "first1", Value = "1"}));
-            Assert.IsTrue(dataPoint.Create(new DataItem {Name = "second2", Value = "2" }));
-            var announcer = new Announcer(dataPoint);
-            var listener = new AnnouncementListener();
+            // wait a while until they get announced
+            Thread.Sleep(3000);
 
-            listener.StartListening();
-            announcer.Announce();
-            Thread.Sleep(100);
-            listener.StopListening();
-
-            var names = listener.GetNames();
-            Assert.IsTrue(names.Count == 2);
+            // get item names (the items should be already recognized)
+            var names = Pear.Data.PearAnnouncementListener.GetNames();
             Assert.IsTrue(names.Contains("first1"));
             Assert.IsTrue(names.Contains("second2"));
 
-            Pear.Data.Deinit();
+            // cleanup
+            Pear.Data.Clear();
         }
     }
 }

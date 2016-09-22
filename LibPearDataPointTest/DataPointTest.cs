@@ -14,8 +14,6 @@ namespace LibPearDataPointTest
         [TestMethod]
         public void LocalDataPointTest()
         {
-            Pear.Data.Deinit();
-
             var dataPoint = new LocalDataPoint();
             Assert.IsTrue(!dataPoint.Any());
 
@@ -40,7 +38,7 @@ namespace LibPearDataPointTest
             // validation is not tested any more - it is tested in previous test cases
             // Happy Flow removeItem
             Assert.IsTrue(dataPoint.Remove(new DataItem { Name = "TheBestNameEver" }));
-            Assert.IsTrue(dataPoint.Count() == 0);
+            Assert.IsTrue(!dataPoint.Any());
 
             // Unhappy Flow removeItem
             Assert.IsFalse(dataPoint.Remove(new DataItem()));
@@ -51,7 +49,7 @@ namespace LibPearDataPointTest
             Assert.IsTrue(dataPoint.Create(new DataItem { Name = "item2", Value = "OriginalValue2" }));
             Assert.IsTrue(dataPoint.Create(new DataItem { Name = "item3", Value = "OriginalValue2" }));
 
-            var dataItem2 = dataPoint.Where(item => item.Name.Equals("item2")).FirstOrDefault();
+            var dataItem2 = dataPoint.FirstOrDefault(item => item.Name.Equals("item2"));
             Assert.IsNotNull(dataItem2);
             dataItem2.Value = "NewValue1";
 
@@ -75,11 +73,12 @@ namespace LibPearDataPointTest
             Pear.Data.Deinit();
         }
 
+        /// <summary>
+        /// Testing conversion of data to specific types
+        /// </summary>
         [TestMethod]
         public void DataPointDataItemConversionTest()
         {
-            Pear.Data.Deinit();
-
             var dataPoint = new LocalDataPoint();
 
             var item = new DataItem();
@@ -251,8 +250,6 @@ namespace LibPearDataPointTest
             Assert.IsNotNull(dataPoint["boolFalse"].AsBool());
             Assert.IsTrue(dataPoint["boolFalse"] == false);
             Assert.IsNull(dataPoint["boolFail"].AsBool());
-
-            Pear.Data.Deinit();
         }
     }
 }

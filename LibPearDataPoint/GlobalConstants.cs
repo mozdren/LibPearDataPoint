@@ -4,12 +4,12 @@
     /// <summary>
     /// Global constants
     /// </summary>
-    public static class GlobalConstants
+    internal static class GlobalConstants
     {
         /// <summary>
         /// String constants for types
         /// </summary>
-        public static class Types
+        internal static class Types
         {
             public const string Bool = "System.Boolean";
             public const string Byte = "System.Byte";

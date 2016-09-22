@@ -14,6 +14,17 @@ namespace LibPearDataPoint
     /// </summary>
     internal class Announcer
     {
+        #region Private Constants
+
+        /// <summary>
+        /// String that should be added to tracer output
+        /// </summary>
+        private const string TracerConstant = "Announcer";
+
+        #endregion
+
+        #region Fields and Properties
+
         /// <summary>
         /// Thread to be used for announcing
         /// </summary>
@@ -25,19 +36,39 @@ namespace LibPearDataPoint
         private bool _isAnnouncing;
 
         /// <summary>
+        /// Custom port for announcing
+        /// </summary>
+        private readonly int _customPort;
+
+        /// <summary>
+        /// UdpClient field
+        /// </summary>
+        private UdpClient _client;
+
+        /// <summary>
         /// Reference to datapoint with dataitems to be anounced in broadcast
         /// </summary>
-        private LocalDataPoint DataPointToAnnounce { get; set; }
+        private LocalDataPoint DataPointToAnnounce { get; }
+
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Creating a instance of an announcer with respective LocalDatapoint
         /// </summary>
-        /// <param name="datapoint"></param>
-        internal Announcer(LocalDataPoint datapoint)
+        /// <param name="datapoint">datapoint to be announced</param>
+        /// <param name="customPort">custom port to be used for announcing</param>
+        internal Announcer(LocalDataPoint datapoint, int customPort = 0)
         {
             DataPointToAnnounce = datapoint;
             _isAnnouncing = false;
+            _customPort = customPort;
         }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Starts announcing
@@ -52,7 +83,11 @@ namespace LibPearDataPoint
                     Announce();
                     Thread.Sleep(1000); // should the time be configurable?
                 }
+
+                Trace.WriteLine(string.Format("{0} End of Announcing", TracerConstant));
             });
+
+            _announcingThread.Start();
         }
 
         /// <summary>
@@ -61,11 +96,15 @@ namespace LibPearDataPoint
         internal void StopAnnouncing()
         {
             _isAnnouncing = false;
+
             try
             {
                 if (_announcingThread != null)
                 {
-                    _announcingThread.Abort();
+                    if (_client != null && _client.Client != null)
+                    {
+                        _client.Client.Shutdown(SocketShutdown.Both);
+                    }
                 }
             }catch(Exception ex){
                 // the application should fail because we were not able to abort the thread
@@ -85,18 +124,23 @@ namespace LibPearDataPoint
 
             try
             {
-                using (var udpClient = new UdpClient())
+                using (_client = new UdpClient())
                 {
-                    var broadcastEndpoint = new IPEndPoint(Pear.Configuration.BroadcastAddress, Pear.Configuration.BroadcastPortNumber);
-                    udpClient.Connect(broadcastEndpoint);
+                    _client.ExclusiveAddressUse = false;
+                    _client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                    var broadcastEndpoint = new IPEndPoint(Pear.Configuration.BroadcastAddress, _customPort != 0 ? _customPort : Pear.Configuration.BroadcastPortNumber);
+                    _client.Client.Bind(broadcastEndpoint);
+                    _client.Connect(broadcastEndpoint);
                     var bytes = Encoding.ASCII.GetBytes(dataToAnnounce);
-                    udpClient.Send(bytes, bytes.Length);
+                    _client.Send(bytes, bytes.Length);
                 }
             }
             catch (Exception exception)
             {
-                Trace.WriteLine(string.Format("Exception when announcing dataitems: {0}", exception.Message));
+                Trace.WriteLine(string.Format("{0} Exception when announcing dataitems: {1}", TracerConstant, exception.Message));
             }
         }
+
+        #endregion
     }
 }

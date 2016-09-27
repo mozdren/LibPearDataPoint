@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModulesTests", "..\LibPearD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "..\Sample\Sample.csproj", "{A8153B67-C83A-437F-B783-BF90265A99BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample2", "..\Sample2\Sample2.csproj", "{D4D5A416-F3DE-417E-8C8D-1F08E8EDC8CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{A8153B67-C83A-437F-B783-BF90265A99BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8153B67-C83A-437F-B783-BF90265A99BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8153B67-C83A-437F-B783-BF90265A99BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4D5A416-F3DE-417E-8C8D-1F08E8EDC8CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4D5A416-F3DE-417E-8C8D-1F08E8EDC8CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4D5A416-F3DE-417E-8C8D-1F08E8EDC8CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4D5A416-F3DE-417E-8C8D-1F08E8EDC8CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

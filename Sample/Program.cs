@@ -33,10 +33,19 @@ namespace Sample
             Pear.Data.Create(localName, rand.Next());
 
             // Endless Loop
-            Console.WriteLine("Press Ctrl+C to stop ...");
             while (true)
             {
-                Thread.Sleep(1000); // sleep for one second before discovering new data
+                try
+                {
+                    Console.Clear(); // clear console
+                }
+                catch (Exception exception)
+                {
+                    Trace.WriteLine(string.Format("Unable to clean console window (Exception: {0})", exception.Message));
+                }
+
+                Console.WriteLine("Press Ctrl+C to stop ...");
+
                 var names = Pear.Data.GetNames(); // getting local and discovered dataitem names
                 foreach (var name in names)
                 {
@@ -58,6 +67,8 @@ namespace Sample
                     counter = 0; // reset counter
                     Pear.Data.Update(localName, rand.Next());
                 }
+
+                Thread.Sleep(1000); // sleep for a while
             }
             // ReSharper disable once FunctionNeverReturns
         }

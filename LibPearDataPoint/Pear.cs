@@ -72,6 +72,18 @@ namespace LibPearDataPoint
         }
 
         /// <summary>
+        /// Users do not have to create endpoints in some cases and just want to read data.
+        /// This method is then used for initializing.
+        /// </summary>
+        public static void Start()
+        {
+            if (PearData.PearDataPointService == null)
+            {
+                PearData.Init();
+            }
+        }
+
+        /// <summary>
         /// count of dataitems stored localy
         /// </summary>
         public static int CountLocal { get { return Data.PearLocalDataPoint.Count(); } }

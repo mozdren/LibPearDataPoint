@@ -317,6 +317,28 @@ namespace LibPearDataPoint
             return dataItem.Value;
         }
 
+        /// <summary>
+        /// Gets the value as an unsigned short.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns></returns>
+        internal static DateTime? AsDateTime(this DataItem dataItem)
+        {
+            if (dataItem == null || string.IsNullOrWhiteSpace(dataItem.Value))
+            {
+                return null;
+            }
+
+            DateTime output;
+
+            if (!DateTime.TryParse(dataItem.Value, out output))
+            {
+                return null;
+            }
+
+            return output;
+        }
+
         #endregion
 
         #region Setters
@@ -476,6 +498,17 @@ namespace LibPearDataPoint
         }
 
         /// <summary>
+        /// Sets DateTime to dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">value to be set</param>
+        internal static void Set(this DataItem dataItem, DateTime value)
+        {
+            dataItem.Value = value.ToString("O");
+            dataItem.LastUpdateTime = DateTime.Now;
+        }
+
+        /// <summary>
         /// Sets value if the data to be set are supported by the dataitem
         /// </summary>
         /// <param name="dataItem">dataitem</param>
@@ -504,6 +537,7 @@ namespace LibPearDataPoint
                 case GlobalConstants.Types.UInt: dataItem.Set((uint)value); break;
                 case GlobalConstants.Types.ULong: dataItem.Set((ulong)value); break;
                 case GlobalConstants.Types.UShort: dataItem.Set((ushort)value); break;
+                case GlobalConstants.Types.DateTime: dataItem.Set((DateTime)value); break;
                 default: throw new InvalidCastException("The value is not of a supported type");
             }
         }

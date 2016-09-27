@@ -109,71 +109,79 @@ namespace LibPearDataPoint
 
             _listeningThread = new Thread(threadDelegate =>
             {
-                using (_client = new UdpClient())
+                while (_isListening)
                 {
-                    var endpoint = _customPort != 0
-                        ? new IPEndPoint(Pear.Configuration.BroadcastAddress, _customPort)
-                        : new IPEndPoint(Pear.Configuration.BroadcastAddress, Pear.Configuration.BroadcastPortNumber);
-
-                    _client.ExclusiveAddressUse = false;
-                    _client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                    _client.Client.Bind(endpoint);
-                    _client.Connect(endpoint);
-
-                    while (_isListening)
+                    try
                     {
-                        var data = _client.Receive(ref endpoint);
-                        var messageString = Encoding.ASCII.GetString(data);
-
-                        lock (_lock)
+                        using (_client = new UdpClient())
                         {
-                            if (string.IsNullOrWhiteSpace(messageString))
+                            var endpoint = _customPort != 0
+                                ? new IPEndPoint(Pear.Configuration.BroadcastAddress, _customPort)
+                                : new IPEndPoint(Pear.Configuration.BroadcastAddress,
+                                    Pear.Configuration.BroadcastPortNumber);
+
+                            _client.ExclusiveAddressUse = false;
+                            _client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                            _client.Client.Bind(endpoint);
+                            _client.Connect(endpoint);
+
+                            var data = _client.Receive(ref endpoint);
+                            var messageString = Encoding.ASCII.GetString(data);
+
+                            lock (_lock)
                             {
-                                continue;
-                            }
-
-                            var splittedData = messageString.Split('#');
-                            if (splittedData.Length != 2)
-                            {
-                                continue;
-                            }
-
-                            List<IPEndPoint> endpoints = new List<IPEndPoint>();
-
-                            // parse endpoints
-                            foreach (var endpointData in from endpointString
-                                in splittedData[0].Split(';')
-                                where !string.IsNullOrWhiteSpace(endpointString)
-                                select endpointString.Split(':')
-                                into endpointData
-                                where endpointData.Length == 2 &&
-                                      !string.IsNullOrWhiteSpace(endpointData[0]) &&
-                                      !string.IsNullOrWhiteSpace(endpointData[1])
-                                select endpointData)
-                            {
-                                IPAddress ipAddress;
-                                int port;
-
-                                if (IPAddress.TryParse(endpointData[0], out ipAddress) &&
-                                    int.TryParse(endpointData[1], out port))
+                                if (string.IsNullOrWhiteSpace(messageString))
                                 {
-                                    endpoints.Add(new IPEndPoint(ipAddress, port));
+                                    continue;
                                 }
-                            }
 
-                            var annoucedItems = splittedData[1].Split(';');
-                            foreach (var item in annoucedItems)
-                            {
-                                if (!_distantDataPoints.ContainsKey(item))
+                                var splittedData = messageString.Split('#');
+                                if (splittedData.Length != 2)
                                 {
-                                    _distantDataPoints.Add(item, endpoints); // new dataitem discovered
+                                    continue;
                                 }
-                                else
+
+                                List<IPEndPoint> endpoints = new List<IPEndPoint>();
+
+                                // parse endpoints
+                                foreach (var endpointData in from endpointString
+                                    in splittedData[0].Split(';')
+                                    where !string.IsNullOrWhiteSpace(endpointString)
+                                    select endpointString.Split(':')
+                                    into endpointData
+                                    where endpointData.Length == 2 &&
+                                          !string.IsNullOrWhiteSpace(endpointData[0]) &&
+                                          !string.IsNullOrWhiteSpace(endpointData[1])
+                                    select endpointData)
                                 {
-                                    _distantDataPoints[item] = endpoints; // new location of dataitem discovered
+                                    IPAddress ipAddress;
+                                    int port;
+
+                                    if (IPAddress.TryParse(endpointData[0], out ipAddress) &&
+                                        int.TryParse(endpointData[1], out port))
+                                    {
+                                        endpoints.Add(new IPEndPoint(ipAddress, port));
+                                    }
+                                }
+
+                                var annoucedItems = splittedData[1].Split(';');
+                                foreach (var item in annoucedItems)
+                                {
+                                    if (!_distantDataPoints.ContainsKey(item))
+                                    {
+                                        _distantDataPoints.Add(item, endpoints); // new dataitem discovered
+                                    }
+                                    else
+                                    {
+                                        _distantDataPoints[item] = endpoints; // new location of dataitem discovered
+                                    }
                                 }
                             }
                         }
+                    }
+                    catch (Exception exception)
+                    {
+                        Trace.WriteLine(string.Format("{0} listening to messages failed. Exception: {1}", TracerConstant, exception.Message));
                     }
                 }
 

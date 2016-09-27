@@ -77,6 +77,11 @@ namespace LibPearDataPoint
         public static int CountLocal { get { return Data.PearLocalDataPoint.Count(); } }
 
         /// <summary>
+        /// Total count of unique dataitems - local and discovered
+        /// </summary>
+        public static int CountTotal { get { return 0; } }
+
+        /// <summary>
         /// This propertie should return a service port on which the data are provided.
         /// Eeach DataPoint should have only one service.
         /// </summary>
@@ -296,6 +301,26 @@ namespace LibPearDataPoint
         {
             PearLocalDataPoint.Clear();
             PearAnnouncementListener.Clear();
+        }
+
+        /// <summary>
+        /// returns names of localy created dataitems
+        /// </summary>
+        /// <returns>collection of names</returns>
+        public ICollection<string> GetLocalNames()
+        {
+            return PearLocalDataPoint.GetNames();
+        }
+
+        /// <summary>
+        /// returns names of local and discovered datapoints
+        /// </summary>
+        /// <returns>collection of names</returns>
+        public ICollection<string> GetNames()
+        {
+            var local = GetLocalNames();
+            var distant = PearAnnouncementListener.GetNames();
+            return distant.Where(item => !local.Contains(item)).Concat(local).ToArray();
         }
 
         /// <summary>

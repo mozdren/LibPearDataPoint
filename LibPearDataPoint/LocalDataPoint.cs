@@ -61,6 +61,18 @@ namespace LibPearDataPoint
         #region Methods
 
         /// <summary>
+        /// Returns local dataitem names
+        /// </summary>
+        /// <returns></returns>
+        public ICollection<string> GetNames()
+        {
+            lock (_dataManipulationLock)
+            {
+                return _localDataItems.Select(item => item.Key).ToArray();
+            }
+        }
+
+        /// <summary>
         /// Creates an item in a local dataset
         /// </summary>
         /// <param name="item">item with a name set</param>
@@ -162,7 +174,7 @@ namespace LibPearDataPoint
         /// <returns>local data item collection enumerator</returns>
         IEnumerator<DataItem> IEnumerable<DataItem>.GetEnumerator()
         {
-            return _localDataItems.Values.Select(item => item.Clone() as DataItem).GetEnumerator();
+            return _localDataItems.Values.ToArray().Select(item => item.Clone() as DataItem).GetEnumerator();
         }
 
         /// <summary>
@@ -171,7 +183,7 @@ namespace LibPearDataPoint
         /// <returns>local data item collection enumerator</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _localDataItems.Values.Select(item => item.Clone() as DataItem).GetEnumerator();
+            return _localDataItems.Values.ToArray().Select(item => item.Clone() as DataItem).GetEnumerator();
         }
 
         /// <summary>

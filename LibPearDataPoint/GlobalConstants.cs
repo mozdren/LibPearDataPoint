@@ -26,6 +26,7 @@
             public const string Short = "System.Int16";
             public const string UShort = "System.UInt16";
             public const string String = "System.String";
+            public const string DateTime = "System.DateTime";
         }
 
         /// <summary>

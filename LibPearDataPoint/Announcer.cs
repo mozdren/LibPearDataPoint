@@ -46,6 +46,11 @@ namespace LibPearDataPoint
         private UdpClient _client;
 
         /// <summary>
+        /// Randomizer for random announcing times
+        /// </summary>
+        private Random _random = new Random();
+
+        /// <summary>
         /// Reference to datapoint with dataitems to be anounced in broadcast
         /// </summary>
         private LocalDataPoint DataPointToAnnounce { get; }
@@ -80,8 +85,16 @@ namespace LibPearDataPoint
             {
                 while (_isAnnouncing)
                 {
-                    Announce();
-                    Thread.Sleep(1000); // should the time be configurable?
+                    try
+                    {
+                        Thread.Sleep(200 + _random.Next(200));
+                        Announce();
+                    }
+                    catch (Exception exception)
+                    {
+                        Trace.WriteLine(string.Format("{0} announcing failed. Exception: {1}", TracerConstant, exception.Message));
+                        // we do not want it to stop working, just try again
+                    }
                 }
 
                 Trace.WriteLine(string.Format("{0} End of Announcing", TracerConstant));
@@ -118,17 +131,26 @@ namespace LibPearDataPoint
         /// </summary>
         internal void Announce()
         {
-            var dataItemsToAnnounce = string.Join(";", DataPointToAnnounce.Select(item => item.Name));
-            var endpointsToAnnounce = string.Join(";", Utils.GetLocalIpAddresses().Select(item => string.Format("{0}:{1}", item, Pear.ServicePort)));
-            var dataToAnnounce = string.Format("{0}#{1}", endpointsToAnnounce, dataItemsToAnnounce);
-
             try
             {
+                var itemNames = DataPointToAnnounce.Select(item => item.Name).Where(item => !string.IsNullOrWhiteSpace(item)).ToArray();
+
+                if (!itemNames.Any()) return; // nothing to announce
+
+                var dataItemsToAnnounce = string.Join(";", itemNames);
+                var endpointsToAnnounce = string.Join(";", Utils.GetLocalIpAddresses().Select(item => string.Format("{0}:{1}", item, Pear.ServicePort)));
+                var dataToAnnounce = string.Format("{0}#{1}", endpointsToAnnounce, dataItemsToAnnounce);
+
+
                 using (_client = new UdpClient())
                 {
                     _client.ExclusiveAddressUse = false;
                     _client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                    var broadcastEndpoint = new IPEndPoint(Pear.Configuration.BroadcastAddress, _customPort != 0 ? _customPort : Pear.Configuration.BroadcastPortNumber);
+                    var broadcastEndpoint = new IPEndPoint(
+                        Pear.Configuration.BroadcastAddress, 
+                        _customPort != 0 
+                            ? _customPort 
+                            : Pear.Configuration.BroadcastPortNumber);
                     _client.Client.Bind(broadcastEndpoint);
                     _client.Connect(broadcastEndpoint);
                     var bytes = Encoding.ASCII.GetBytes(dataToAnnounce);
@@ -137,7 +159,8 @@ namespace LibPearDataPoint
             }
             catch (Exception exception)
             {
-                Trace.WriteLine(string.Format("{0} Exception when announcing dataitems: {1}", TracerConstant, exception.Message));
+                Trace.WriteLine(string.Format("{0} Exception when announcing dataitems: {1}", TracerConstant,
+                    exception.Message));
             }
         }
 

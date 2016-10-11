@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -16,7 +17,22 @@ namespace LibPearDataPoint
         /// <summary>
         /// String that should be added to tracer output
         /// </summary>
-        private const string TracerConstant = "AnnoucementListener";
+        private const string TracerConstant = "Pear";
+
+        #endregion
+
+        #region Delegates and Events
+
+        /// <summary>
+        /// Public delegate describing interface of method that can process change of the dataitem
+        /// </summary>
+        /// <param name="changedDataItem">dataitem that was changed</param>
+        public delegate void ProcessDataItemChangeDelegate(DataItem changedDataItem);
+
+        /// <summary>
+        /// An Event that shows that announces a change of dataitem
+        /// </summary>
+        public event ProcessDataItemChangeDelegate DataItemChanged;
 
         #endregion
 
@@ -46,6 +62,11 @@ namespace LibPearDataPoint
         /// Annoucment listener listens to annoucments of distant datapoints and keeps track of them
         /// </summary>
         internal AnnouncementListener PearAnnouncementListener;
+
+        /// <summary>
+        /// Subscriptions to dataitems
+        /// </summary>
+        internal Subscriptions PearSubscriptions;
 
         /// <summary>
         /// Singleton of a pear object
@@ -130,12 +151,27 @@ namespace LibPearDataPoint
         /// </summary>
         internal void Init()
         {
-            PearDataPointService = new DataPointService(PearLocalDataPoint);
+            PearSubscriptions = new Subscriptions(PearLocalDataPoint);
+            PearDataPointService = new DataPointService(PearLocalDataPoint, PearSubscriptions);
             PearAnnouncer = new Announcer(PearLocalDataPoint);
             PearAnnouncementListener = new AnnouncementListener();
+            PearDataPointService.DataItemChanged += OnDataItemChanged; // propagate changes of distant dataitems
+            PearLocalDataPoint.DataItemChanged += OnDataItemChanged; // propagate changes of local dataitems
             PearAnnouncer.StartAnnouncing();
             PearDataPointService.StartService();
             PearAnnouncementListener.StartListening();
+        }
+
+        /// <summary>
+        /// Reaction on change of dataitem, distant or local
+        /// </summary>
+        /// <param name="changedDataItem">changed dataitem</param>
+        private void OnDataItemChanged(DataItem changedDataItem)
+        {
+            if (DataItemChanged != null)
+            {
+                DataItemChanged(changedDataItem);
+            }
         }
 
         /// <summary>
@@ -165,6 +201,7 @@ namespace LibPearDataPoint
                 PearAnnouncer = null;
                 PearAnnouncementListener = null;
                 PearDataPointService = null;
+                PearSubscriptions = null;
             }
             catch (KeyNotFoundException ex)
             {
@@ -253,6 +290,39 @@ namespace LibPearDataPoint
             return false;
         }
 
+        public bool Subscribe(string name)
+        {
+            if (!Utils.IsNameValid(name))
+            {
+                return false;
+            }
+
+            var localData = PearLocalDataPoint[name];
+            if (localData != null)
+            {
+                // local dataitems changes are subscribed automatically
+                return true;
+            }
+
+            var endpoints = PearAnnouncementListener.GetEndpoints(name);
+            if (endpoints == null)
+            {
+                // there is not such distant dataitem
+                return false;
+            }
+
+            // there might be multiple endpoints for one dataitem and we subscribe to all of them
+            // if multiple endpoint are on one machine, then it would be subscribed once in the end
+            // since it keeps track the origin of the request (client endpoint).
+            var subscribed = false;
+            foreach (var endpoint in endpoints)
+            {
+                if (DataPointServiceClient.Subscribe(endpoint, name)) subscribed = true;
+            }
+
+            return subscribed; // return true if at least one enpoint states that we are successfully subscribed
+        }
+
         /// <summary>
         /// string indexation of datapoint
         /// </summary>
@@ -313,6 +383,8 @@ namespace LibPearDataPoint
         {
             PearLocalDataPoint.Clear();
             PearAnnouncementListener.Clear();
+            PearSubscriptions.Clear();
+            Data.DataItemChanged = null;
         }
 
         /// <summary>

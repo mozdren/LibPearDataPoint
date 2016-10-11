@@ -160,20 +160,29 @@ namespace LibPearDataPoint
                                     if (IPAddress.TryParse(endpointData[0], out ipAddress) &&
                                         int.TryParse(endpointData[1], out port))
                                     {
-                                        endpoints.Add(new IPEndPoint(ipAddress, port));
+                                        var parsedEndpoint = new IPEndPoint(ipAddress, port);
+                                        if (DataPointServiceClient.Ping(parsedEndpoint))
+                                        {
+                                            endpoints.Add(parsedEndpoint);
+                                            break; // we really need only one working connection
+                                        }
                                     }
                                 }
-
+                                
                                 var annoucedItems = splittedData[1].Split(';');
-                                foreach (var item in annoucedItems)
+
+                                if (annoucedItems.Any() && endpoints.Any())
                                 {
-                                    if (!_distantDataPoints.ContainsKey(item))
+                                    foreach (var item in annoucedItems)
                                     {
-                                        _distantDataPoints.Add(item, endpoints); // new dataitem discovered
-                                    }
-                                    else
-                                    {
-                                        _distantDataPoints[item] = endpoints; // new location of dataitem discovered
+                                        if (!_distantDataPoints.ContainsKey(item))
+                                        {
+                                            _distantDataPoints.Add(item, endpoints); // new dataitem discovered
+                                        }
+                                        else
+                                        {
+                                            _distantDataPoints[item] = endpoints; // new location of dataitem discovered
+                                        }
                                     }
                                 }
                             }

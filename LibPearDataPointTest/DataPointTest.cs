@@ -8,6 +8,41 @@ namespace LibPearDataPointTest
     [TestClass]
     public class DataPointTest
     {
+        private bool LocalDataPointWasProcessed = false;
+
+        /// <summary>
+        /// test subscribtion
+        /// </summary>
+        [TestMethod]
+        public void LocalDataPointSubscribtions()
+        {
+            // prepare datapoint data
+            var dataPoint = new LocalDataPoint();
+            dataPoint.DataItemChanged += ProcessChangeOfTheItem;
+            dataPoint.Create(new DataItem { Name = "SomeName", Value = "SomeValue" });
+
+            // Updating the dataitem and therefore invoking change event
+            dataPoint.Update(new DataItem { Name = "SomeName", Value = "SomeNewValue" });
+
+            // Checking if the method was correctly invoked and processed
+            Assert.IsTrue(LocalDataPointWasProcessed);
+
+            // Value should not be changed by handler
+            Assert.IsTrue(dataPoint["SomeName"].Value == "SomeNewValue");
+        }
+
+        /// <summary>
+        /// Testing event processing method
+        /// </summary>
+        /// <param name="dataItem">dataitem that was changed (respectively its clone)</param>
+        private void ProcessChangeOfTheItem(DataItem dataItem)
+        {
+            Assert.IsTrue(dataItem.Name == "SomeName");
+            Assert.IsTrue(dataItem.Value == "SomeNewValue");
+            dataItem.Value = "ChanginValueShouldNotChangeTheOriginalObjectValue";
+            LocalDataPointWasProcessed = true;
+        }
+
         /// <summary>
         /// Testing local datapoints
         /// </summary>

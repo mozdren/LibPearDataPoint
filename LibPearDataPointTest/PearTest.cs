@@ -9,6 +9,11 @@ namespace LibPearDataPointTest
     public class PearTest
     {
         /// <summary>
+        /// indication of change have been processed
+        /// </summary>
+        private bool changeProcessed;
+
+        /// <summary>
         /// Test for Pear Entry point
         /// </summary>
         [TestMethod]
@@ -138,6 +143,28 @@ namespace LibPearDataPointTest
             Assert.IsTrue(Pear.CountLocal == 0);
 
             Pear.Data.Clear();
+        }
+
+        /// <summary>
+        /// Test for Pear Entry point
+        /// </summary>
+        [TestMethod]
+        public void PearSubscriptionTest()
+        {
+            changeProcessed = false;
+            Pear.Data.Create("test", "value");
+            Pear.Data.DataItemChanged += OnDataItemChanged;
+            Pear.Data.Update("test", "valueChanged");
+            Assert.IsTrue(changeProcessed);
+
+            Pear.Data.Clear();
+        }
+
+        private void OnDataItemChanged(DataItem changedDataItem)
+        {
+            Assert.IsTrue(changedDataItem.Name == "test");
+            Assert.IsTrue(changedDataItem.Value == "valueChanged");
+            changeProcessed = true;
         }
     }
 }

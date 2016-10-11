@@ -23,6 +23,15 @@ namespace LibPearDataPoint
 
         #endregion
 
+        #region Delegates and Events
+
+        /// <summary>
+        /// An Event that schows that announces a change of dataitem
+        /// </summary>
+        public event Pear.ProcessDataItemChangeDelegate DataItemChanged;
+
+        #endregion
+
         #region Fields and Properties
 
         /// <summary>
@@ -46,6 +55,11 @@ namespace LibPearDataPoint
         private readonly LocalDataPoint _localDataPoint;
 
         /// <summary>
+        /// Subscriptions
+        /// </summary>
+        private readonly Subscriptions _subscriptions;
+
+        /// <summary>
         /// is true if service accepts new connections
         /// </summary>
         private bool _isAccepting;
@@ -63,9 +77,10 @@ namespace LibPearDataPoint
         /// A constructor that expects the datapoint instance as a parameter
         /// </summary>
         /// <param name="localDataPoint">local datapoint</param>
-        internal DataPointService(LocalDataPoint localDataPoint)
+        internal DataPointService(LocalDataPoint localDataPoint, Subscriptions subscriptions)
         {
             _localDataPoint = localDataPoint;
+            _subscriptions = subscriptions;
         }
 
         #endregion
@@ -242,6 +257,15 @@ namespace LibPearDataPoint
                             case GlobalConstants.Commands.Update:
                                 ProcessUpdate(writer, splittedCommand.Skip(1));
                                 break;
+                            case GlobalConstants.Commands.ChangeEvent:
+                                ProcessChangeEvent(writer, splittedCommand.Skip(1));
+                                break;
+                            case GlobalConstants.Commands.Subscribe:
+                                ProcessSubscription(writer, (IPEndPoint)clientSocket.RemoteEndPoint, splittedCommand.Skip(1));
+                                break;
+                            case GlobalConstants.Commands.Ping:
+                                ProcessPing(writer, splittedCommand.Skip(1));
+                                break;
                             default:
                                 WriteUnknownCommandResponse(writer);
                                 Trace.WriteLine(string.Format("{0} Unknown command was requested (Request: {1})", TracerConstant, requestCommand));
@@ -300,6 +324,7 @@ namespace LibPearDataPoint
             if (updateParams.Length < 2)
             {
                 writer.WriteLine("NOK;wrong parameters");
+                return;
             }
 
             // is name valid?
@@ -307,6 +332,7 @@ namespace LibPearDataPoint
             if (!Utils.IsNameValid(name))
             {
                 writer.WriteLine("NOK;Invalid name");
+                return;
             }
 
             // does local dataitem exist
@@ -314,6 +340,7 @@ namespace LibPearDataPoint
             if (dataItem == null)
             {
                 writer.WriteLine("NOK;dataitem does not exist");
+                return;
             }
 
             // get data to be set
@@ -331,7 +358,106 @@ namespace LibPearDataPoint
             writer.WriteLine("NOK;item update failed");
         }
 
-        #endregion
+        /// <summary>
+        /// When this message is received, then the distant dataitem has been changed
+        /// and new updated dataitem is being sent inside of this message
+        /// </summary>
+        /// <param name="writer">stream writer</param>
+        /// <param name="parameters">parameters</param>
+        private void ProcessChangeEvent(TextWriter writer, IEnumerable<string> parameters)
+        {
+            // enought parameters?
+            var changeEventParams = parameters.ToArray();
+            if (changeEventParams.Length < 2)
+            {
+                writer.WriteLine("NOK;wrong parameters");
+                return;
+            }
 
+            // is name valid?
+            var name = changeEventParams[0];
+            if (!Utils.IsNameValid(name))
+            {
+                writer.WriteLine("NOK;Invalid name");
+                return;
+            }
+
+            // now we have all the data we need and can respond
+            // with a message that everything is ok
+            writer.WriteLine("OK;data reveived");
+
+            // get data to be set to a new dataitem
+            var data = string.Join(";", changeEventParams.Skip(1));
+            var newDataItem = new DataItem
+            {
+                IsLocal = false,
+                IsReliable = true,
+                LastUpdateTime = DateTime.Now,
+                Name = name,
+                Value = data
+            };
+
+            // trigger the event with received data
+            if (DataItemChanged != null)
+            {
+                DataItemChanged(newDataItem);
+            }
+        }
+
+        /// <summary>
+        /// Processes subscribtion to dataitem from a specific endpoint
+        /// </summary>
+        /// <param name="writer">writer to client</param>
+        /// <param name="endpoint">endpoint of the client</param>
+        /// <param name="parameters">provided parameters</param>
+        private void ProcessSubscription(TextWriter writer, IPEndPoint endpoint, IEnumerable<string> parameters)
+        {
+            // enought parameters?
+            var subscriptionParams = parameters.ToArray();
+            if (subscriptionParams.Length < 2)
+            {
+                writer.WriteLine("NOK;wrong parameters");
+                return;
+            }
+
+            // is name valid?
+            var name = subscriptionParams[0];
+            if (!Utils.IsNameValid(name))
+            {
+                writer.WriteLine("NOK;Invalid name");
+                return;
+            }
+
+            // is service port number valid?
+            var servicePortStr = subscriptionParams[1];
+            int servicePort;
+            if (!int.TryParse(servicePortStr, out servicePort))
+            {
+                writer.WriteLine("NOK;Invalid port number");
+                return;
+            }
+
+            // now we have all the data we need and can respond
+            // with a message that everything is ok
+            writer.WriteLine("OK;data reveived");
+
+            //create subscription endpoint - origin of subscription with correct service port
+            var subcriptionEndpoint = new IPEndPoint(endpoint.Address, servicePort);
+
+            // subscribe the endpoint for change events
+            _subscriptions.Subscribe(subcriptionEndpoint, name);
+        }
+
+        /// <summary>
+        /// Ping - for checking connectivity
+        /// </summary>
+        /// <param name="writer">writer to client stream</param>
+        /// <param name="enumerable">parameters</param>
+        private void ProcessPing(StreamWriter writer, IEnumerable<string> enumerable)
+        {
+            writer.WriteLine("OK;received");
+        }
+
+        #endregion
     }
 }

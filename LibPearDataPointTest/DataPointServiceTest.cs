@@ -30,7 +30,7 @@ namespace LibPearDataPointTest
 
             Assert.IsTrue(dataPoint["test1"].ToString().Equals("this;is;a;very;specific;string"));
 
-            var service = new DataPointService(dataPoint);
+            var service = new DataPointService(dataPoint, null);
             service.StartService(1234);
 
             Assert.IsTrue(service.ServicePort == 1234);

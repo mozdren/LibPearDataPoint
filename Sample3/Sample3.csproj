@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{874F5E39-84E4-4FF4-9C06-93CD6C497BBE}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{0CED8D80-2163-4F5F-A38C-A432C6658E2C}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LibPearDataPoint</RootNamespace>
-    <AssemblyName>LibPearDataPoint</AssemblyName>
+    <RootNamespace>Sample3</RootNamespace>
+    <AssemblyName>Sample3</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -32,8 +35,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,34 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnnouncementListener.cs" />
-    <Compile Include="Announcer.cs" />
-    <Compile Include="Configuration.cs" />
-    <Compile Include="Configuration.Helper.cs" />
-    <Compile Include="DataItem.cs" />
-    <Compile Include="DataItem.Extensions.cs" />
-    <Compile Include="DataItem.Operators.cs" />
-    <Compile Include="DataPointService.cs" />
-    <Compile Include="DataPointServiceClient.cs" />
-    <Compile Include="GlobalConstants.cs" />
-    <Compile Include="LocalDataPoint.cs" />
-    <Compile Include="Pear.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Subscriptions.cs" />
-    <Compile Include="Utils.Init.cs" />
-    <Compile Include="Utils.Net.cs" />
-    <Compile Include="Utils.String.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Configuration.xsd">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Configuration.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <ProjectReference Include="..\LibPearDataPoint\LibPearDataPoint.csproj">
+      <Project>{874f5e39-84e4-4ff4-9c06-93cd6c497bbe}</Project>
+      <Name>LibPearDataPoint</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

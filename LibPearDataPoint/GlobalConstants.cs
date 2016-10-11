@@ -30,12 +30,34 @@
         }
 
         /// <summary>
-        /// Command constants
+        /// Command constants used in messages
         /// </summary>
         internal static class Commands
         {
+            /// <summary>
+            /// Request for data
+            /// </summary>
             internal const string Get = "GET";
+
+            /// <summary>
+            /// Request for updata of data
+            /// </summary>
             internal const string Update = "UPDATE";
+
+            /// <summary>
+            /// Information about event that changed distant data
+            /// </summary>
+            internal const string ChangeEvent = "EVCHNG";
+
+            /// <summary>
+            /// Request for subscription
+            /// </summary>
+            internal const string Subscribe = "SUBS";
+
+            /// <summary>
+            /// Ping the service
+            /// </summary>
+            internal const string Ping = "PING";
         }
     }
 }

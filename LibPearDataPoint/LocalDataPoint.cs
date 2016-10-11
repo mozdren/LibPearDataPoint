@@ -8,6 +8,15 @@ namespace LibPearDataPoint
 {
     internal class LocalDataPoint : IEnumerable<DataItem>
     {
+        #region Delegates & Events
+
+        /// <summary>
+        /// Event representing changes being done to a specific dataitem.
+        /// </summary>
+        internal event Pear.ProcessDataItemChangeDelegate DataItemChanged;
+
+        #endregion
+
         #region Private Constants
 
         /// <summary>
@@ -164,6 +173,13 @@ namespace LibPearDataPoint
                 workItem.IsReliable = true;
                 workItem.IsLocal = true;
                 _localDataItems[workItem.Name] = workItem;
+
+                // inform subscribed objects about the chenges of the dataitem
+                if (DataItemChanged != null)
+                {
+                    DataItemChanged(workItem.Clone() as DataItem);
+                }
+                
                 return true;
             }
         }

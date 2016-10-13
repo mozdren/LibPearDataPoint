@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace LibPearDataPoint
 {
@@ -311,9 +312,7 @@ namespace LibPearDataPoint
                 return false;
             }
 
-            // there might be multiple endpoints for one dataitem and we subscribe to all of them
-            // if multiple endpoint are on one machine, then it would be subscribed once in the end
-            // since it keeps track the origin of the request (client endpoint).
+            // With current implementation, each dataitem should be associated with ONE endpoint.
             var subscribed = false;
             foreach (var endpoint in endpoints)
             {
@@ -321,6 +320,50 @@ namespace LibPearDataPoint
             }
 
             return subscribed; // return true if at least one enpoint states that we are successfully subscribed
+        }
+
+        /// <summary>
+        /// A synchronization method - waits for occurance of the dataitem with specific name
+        /// </summary>
+        /// <param name="name">name of the dataitem we are waiting for</param>
+        /// <param name="timeoutSeconds">timeout in seconds</param>
+        /// <returns>true if dataitem appears</returns>
+        public bool WaitFor(string name, int timeoutSeconds = 0)
+        {
+            var startTime = DateTime.Now;
+
+            while (Data[name] == null)
+            {
+                Thread.Sleep(50);
+                if (timeoutSeconds != 0  && DateTime.Now - startTime > new TimeSpan(0, 0, timeoutSeconds))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// A synchronization method - waits for occurance of the dataitems with specific names
+        /// </summary>
+        /// <param name="names">names of dataitems we are waiting for</param>
+        /// <param name="timeoutSeconds">timeout in seconds</param>
+        /// <returns></returns>
+        public bool WaitFor(string[] names, int timeoutSeconds = 0)
+        {
+            var startTime = DateTime.Now;
+
+            while (names.Any(name => Data[name] == null))
+            {
+                Thread.Sleep(50);
+                if (timeoutSeconds != 0 && DateTime.Now - startTime > new TimeSpan(0, 0, timeoutSeconds))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>

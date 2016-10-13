@@ -166,5 +166,22 @@ namespace LibPearDataPointTest
             Assert.IsTrue(changedDataItem.Value == "valueChanged");
             changeProcessed = true;
         }
+
+        /// <summary>
+        /// Testing wait for method
+        /// </summary>
+        [TestMethod]
+        public void TestWaitFor()
+        {
+            Assert.IsFalse(Pear.Data.WaitFor("nonexistingdataitemname", 1));
+            Pear.Data.Create("ExitingName");
+            Assert.IsTrue(Pear.Data.WaitFor("ExitingName"));
+
+            Assert.IsFalse(Pear.Data.WaitFor(new[] { "ExitingName", "ExistingName2" }, 1));
+            Pear.Data.Create("ExistingName2");
+            Assert.IsTrue(Pear.Data.WaitFor(new[] { "ExitingName", "ExistingName2" }));
+
+            Pear.Data.Clear();
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -364,6 +365,39 @@ namespace LibPearDataPoint
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Waits for distant dataitem discovery with a specified name. If the name is not specied, then
+        /// the method waits until it finds any distant dataitem.
+        /// </summary>
+        /// <param name="name">name of the specified distant dataitem</param>
+        /// <param name="timeoutSeconds">timeout after which the method returns false</param>
+        /// <returns>true if distant dataitem was discovered before timeout</returns>
+        public bool WaitForDistant(string name = null, int timeoutSeconds = 0)
+        {
+            var uniqueDataPoints = new List<IPEndPoint>();
+            var startTime = DateTime.Now;
+
+            while (DateTime.Now - startTime < new TimeSpan(0, 0, timeoutSeconds))
+            {
+                var allNames = GetNames();
+                var localNames = GetLocalNames();
+                var distantNames = allNames.Where(n => !localNames.Contains(n));
+
+                if (Utils.IsNameValid(name) && distantNames.Contains(name))
+                {
+                    return true;
+                }
+                else if (distantNames.Any())
+                {
+                    return true;
+                }
+
+                Thread.Sleep(50);
+            }
+
+            return false;
         }
 
         /// <summary>

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace LibPearDataPoint
@@ -114,7 +113,12 @@ namespace LibPearDataPoint
         /// <summary>
         /// Total count of unique dataitems - local and discovered
         /// </summary>
-        public static int CountTotal { get { return 0; } }
+        public static int Count { get { return CountLocal + CountDistant; } }
+
+        /// <summary>
+        /// Count of Distant DataItems discovered (local dataitems are excluded)
+        /// </summary>
+        public static int CountDistant { get { return Pear.Data.GetDistantNames().Count(); } }
 
         /// <summary>
         /// This propertie should return a service port on which the data are provided.
@@ -292,6 +296,12 @@ namespace LibPearDataPoint
             return false;
         }
 
+        /// <summary>
+        /// When subscription is requested then the event DataItemChanged will be triggered for that DataItem.
+        /// If the dataitem is local, then the event is triggered automatically (no subscription needed).
+        /// </summary>
+        /// <param name="name">name of the dataitem we want to subscribe to</param>
+        /// <returns>true if the subscription was sucessful</returns>
         public bool Subscribe(string name)
         {
             if (!Utils.IsNameValid(name))
@@ -381,15 +391,44 @@ namespace LibPearDataPoint
 
             while (DateTime.Now - startTime < new TimeSpan(0, 0, timeoutSeconds))
             {
-                var allNames = GetNames();
-                var localNames = GetLocalNames();
-                var distantNames = allNames.Where(n => !localNames.Contains(n));
+                var distantNames = GetDistantNames();
 
                 if (Utils.IsNameValid(name) && distantNames.Contains(name))
                 {
                     return true;
                 }
                 else if (distantNames.Any())
+                {
+                    return true;
+                }
+
+                Thread.Sleep(50);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Waits for distant dataitems discovery with a specified names.
+        /// </summary>
+        /// <param name="name">names of specified distant dataitems</param>
+        /// <param name="timeoutSeconds">timeout after which the method returns false</param>
+        /// <returns>true if distant dataitems were discovered before timeout</returns>
+        public bool WaitForDistant(string[] names, int timeoutSeconds = 0)
+        {
+            var uniqueDataPoints = new List<IPEndPoint>();
+            var startTime = DateTime.Now;
+
+            if (names.Any(name => !Utils.IsNameValid(name)))
+            {
+                return false;
+            }
+
+            while (DateTime.Now - startTime < new TimeSpan(0, 0, timeoutSeconds))
+            {
+                var distantNames = GetDistantNames();
+
+                if (names.All(name => distantNames.Contains(name)))
                 {
                     return true;
                 }
@@ -428,6 +467,24 @@ namespace LibPearDataPoint
 
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Returns a collection of distant dataitems
+        /// </summary>
+        /// <returns>collection of distant dataitems</returns>
+        public ICollection<DataItem> GetDistantDataItems()
+        {
+            return GetDistantNames().Select(name => this[name]).Where(dataItem => dataItem != null).ToArray();
+        }
+
+        /// <summary>
+        /// Returns a collection of all datatitems (local and distant)
+        /// </summary>
+        /// <returns>collection of all dataitems</returns>
+        public ICollection<DataItem> GetAllDataItems()
+        {
+            return GetNames().Select(name => this[name]).Where(dataItem => dataItem != null).ToArray();
         }
 
         /// <summary>
@@ -482,6 +539,17 @@ namespace LibPearDataPoint
             var local = GetLocalNames();
             var distant = PearAnnouncementListener.GetNames();
             return distant.Where(item => !local.Contains(item)).Concat(local).ToArray();
+        }
+
+        /// <summary>
+        /// Returns non-local (distant) datapoints names
+        /// </summary>
+        /// <returns>collection of distant names</returns>
+        public ICollection<string> GetDistantNames()
+        {
+            var allNames = GetNames();
+            var localNames = GetLocalNames();
+            return allNames.Where(n => !localNames.Contains(n)).ToArray();
         }
 
         /// <summary>

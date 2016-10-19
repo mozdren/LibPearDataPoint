@@ -13,7 +13,7 @@ namespace Sample6
         {
             // wait for 10 seconds to discover distant dataitems
             Console.WriteLine("Waiting for discovery of distant dataitems ...");
-            if (Pear.Data.WaitForDistant(timeoutSeconds: 10))
+            if (Peer.WaitForDistant(10))
             {
                 // Distant dataitems were found in the specified limit of 10 seconds
                 Console.WriteLine("Distant dataitems discovered");

@@ -17,16 +17,15 @@ namespace Sample2
             // We are not creating endpoints and we are just want to read and update
             // distant data, and herefore, we call Start at the beginning of the application
             // to initialize Pear
-            Pear.Start();
+            Peer.Start();
             Thread.Sleep(3000); // wait for discovery of distant datapoints
 
             Console.WriteLine("Press Ctrl+C to stop ...");
             while (true)
             {
-                var names = Pear.Data.GetNames(); // get distant datapoints
-                foreach (var name in names)
+                foreach (var name in Peer.Names) // get distant datapoints
                 {
-                    Pear.Data.Update(name, 0); // set distant datapoint value to zero
+                    Peer.Update(name, 0); // set distant datapoint value to zero
                 }
 
                 Thread.Sleep(20000);

@@ -14,22 +14,21 @@ namespace Sample3
         {
             // We are not creating endpoints, we are just want to subscribe to all items
             // and inform about changes
-            Pear.Start();
+            Peer.Start();
             Thread.Sleep(3000); // wait for discovery of some distant datapoints
 
-            Pear.Data.DataItemChanged += OnItemChanged;
+            Peer.DataItemChanged += OnItemChanged;
 
             var subscribed = new List<string>();
 
             Console.WriteLine("Press Ctrl+C to stop ...");
             while (true)
             {
-                var names = Pear.Data.GetNames(); // get distant datapoints
-                foreach (var name in names)
+                foreach (var name in Peer.Names) // get distant datapoints
                 {
                     if (!subscribed.Contains(name))
                     {
-                        if (Pear.Data.Subscribe(name))
+                        if (Peer.Subscribe(name))
                         {
                             subscribed.Add(name);
                             Console.WriteLine("Subscribed to {0}", name);

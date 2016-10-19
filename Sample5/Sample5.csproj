@@ -50,7 +50,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LibPearDataPoint.csproj">
+    <ProjectReference Include="..\LibPearDataPoint\LibPearDataPoint.csproj">
       <Project>{874f5e39-84e4-4ff4-9c06-93cd6c497bbe}</Project>
       <Name>LibPearDataPoint</Name>
     </ProjectReference>

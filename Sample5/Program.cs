@@ -14,10 +14,10 @@ namespace Sample4
         {
             // Wait for data to be available
             Console.WriteLine("Waiting for data...");
-            Pear.Data.WaitFor("Example4");
+            Peer.WaitFor("Example4");
 
             // Get the data
-            var dataItem = Pear.Data["Example4"];
+            var dataItem = Peer.Get("Example4");
             if (dataItem == null)
             {
                 Console.WriteLine("ERROR: Could not retrieve data!");

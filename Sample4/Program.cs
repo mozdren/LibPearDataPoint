@@ -12,11 +12,11 @@ namespace Sample4
         static void Main()
         {
             // intitialize and discover the distant items
-            Pear.Start();
+            Peer.Start();
             Thread.Sleep(1000);
 
             // Create data that should be created
-            if (!Pear.Data.Create("Example4", "Data"))
+            if (!Peer.Create("Example4", "Data"))
             {
                 Console.WriteLine("DataItem with Example4 cannot be created, it probably already exists!");
             }

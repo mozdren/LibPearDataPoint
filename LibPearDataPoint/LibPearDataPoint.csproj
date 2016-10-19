@@ -46,6 +46,7 @@
     <Compile Include="Announcer.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Configuration.Helper.cs" />
+    <Compile Include="Peer.cs" />
     <Compile Include="DataItem.cs" />
     <Compile Include="DataItem.Extensions.cs" />
     <Compile Include="DataItem.Operators.cs" />

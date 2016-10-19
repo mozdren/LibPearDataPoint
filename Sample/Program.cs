@@ -30,7 +30,7 @@ namespace Sample
             var localName = string.Format("process{0}.RandomValue", processId); // creating unique system name
 
             // Data item creation
-            Pear.Data.Create(localName, rand.Next());
+            Peer.Create(localName, rand.Next());
 
             // Endless Loop
             while (true)
@@ -46,10 +46,9 @@ namespace Sample
 
                 Console.WriteLine("Press Ctrl+C to stop ...");
 
-                var names = Pear.Data.GetNames(); // getting local and discovered dataitem names
-                foreach (var name in names)
+                foreach (var name in Peer.Names) // getting local and discovered dataitem names
                 {
-                    int? value = Pear.Data[name];
+                    int? value = Peer.Get(name);
 
                     if (value.HasValue)
                     {
@@ -65,7 +64,7 @@ namespace Sample
                 if (counter++ == 10)
                 {
                     counter = 0; // reset counter
-                    Pear.Data.Update(localName, rand.Next());
+                    Peer.Update(localName, rand.Next());
                 }
 
                 Thread.Sleep(1000); // sleep for a while

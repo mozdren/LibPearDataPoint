@@ -109,6 +109,173 @@ namespace LibPearDataPointTest
         }
 
         /// <summary>
+        /// Testing conversion of data to specific array types
+        /// </summary>
+        [TestMethod]
+        public void DataPointDataItemArraysConversionTest()
+        {
+            var dataPoint = new LocalDataPoint();
+
+            var item = new DataItem();
+
+            {// data item long array
+                item.Name = "longArray";
+                item.Set(new long[] { 10, 20, 30 });
+                Assert.IsTrue(dataPoint.Create(item));
+                long[] data = dataPoint["longArray"];
+                Assert.IsTrue(data != null);
+                Assert.IsTrue(data.Length == 3);
+                Assert.IsTrue(data[0] == 10);
+                Assert.IsTrue(data[1] == 20);
+                Assert.IsTrue(data[2] == 30);
+            }
+
+            {// data item unsigned long array
+                item.Name = "ulongArray";
+                item.Set(new ulong[] { 10, 20, 30 });
+                Assert.IsTrue(dataPoint.Create(item));
+                ulong[] data = dataPoint["ulongArray"];
+                Assert.IsTrue(data != null);
+                Assert.IsTrue(data.Length == 3);
+                Assert.IsTrue(data[0] == 10);
+                Assert.IsTrue(data[1] == 20);
+                Assert.IsTrue(data[2] == 30);
+            }
+
+            {// data item int array
+                item.Name = "intArray";
+                item.Set(new int[] { 10, 20, 30 });
+                Assert.IsTrue(dataPoint.Create(item));
+                int[] data = dataPoint["intArray"];
+                Assert.IsTrue(data != null);
+                Assert.IsTrue(data.Length == 3);
+                Assert.IsTrue(data[0] == 10);
+                Assert.IsTrue(data[1] == 20);
+                Assert.IsTrue(data[2] == 30);
+            }
+
+            {// data item unsigned int array
+                item.Name = "uintArray";
+                item.Set(new uint[] { 10, 20, 30 });
+                Assert.IsTrue(dataPoint.Create(item));
+                uint[] data = dataPoint["uintArray"];
+                Assert.IsTrue(data != null);
+                Assert.IsTrue(data.Length == 3);
+                Assert.IsTrue(data[0] == 10);
+                Assert.IsTrue(data[1] == 20);
+                Assert.IsTrue(data[2] == 30);
+            }
+
+            {// data item short array
+                item.Name = "shortArray";
+                item.Set(new short[] { 10, 20, 30 });
+                Assert.IsTrue(dataPoint.Create(item));
+                short[] data = dataPoint["shortArray"];
+                Assert.IsTrue(data != null);
+                Assert.IsTrue(data.Length == 3);
+                Assert.IsTrue(data[0] == 10);
+                Assert.IsTrue(data[1] == 20);
+                Assert.IsTrue(data[2] == 30);
+            }
+
+            {// data item unsigned short array
+                item.Name = "ushortArray";
+                item.Set(new ushort[] { 10, 20, 30 });
+                Assert.IsTrue(dataPoint.Create(item));
+                ushort[] data = dataPoint["ushortArray"];
+                Assert.IsTrue(data != null);
+                Assert.IsTrue(data.Length == 3);
+                Assert.IsTrue(data[0] == 10);
+                Assert.IsTrue(data[1] == 20);
+                Assert.IsTrue(data[2] == 30);
+            }
+
+            {// data item char array
+                item.Name = "charArray";
+                item.Set(new char[] { 'a', 'b', 'c' });
+                Assert.IsTrue(dataPoint.Create(item));
+                char[] data = dataPoint["charArray"];
+                Assert.IsTrue(data != null);
+                Assert.IsTrue(data.Length == 3);
+                Assert.IsTrue(data[0] == 'a');
+                Assert.IsTrue(data[1] == 'b');
+                Assert.IsTrue(data[2] == 'c');
+            }
+
+            {// data item byte array
+                item.Name = "byteArray";
+                item.Set(new byte[] { 10, 20, 30 });
+                Assert.IsTrue(dataPoint.Create(item));
+                byte[] data = dataPoint["byteArray"];
+                Assert.IsTrue(data != null);
+                Assert.IsTrue(data.Length == 3);
+                Assert.IsTrue(data[0] == 10);
+                Assert.IsTrue(data[1] == 20);
+                Assert.IsTrue(data[2] == 30);
+            }
+
+            {// data item short byte array
+                item.Name = "sbyteArray";
+                item.Set(new sbyte[] { 10, 20, 30 });
+                Assert.IsTrue(dataPoint.Create(item));
+                sbyte[] data = dataPoint["sbyteArray"];
+                Assert.IsTrue(data != null);
+                Assert.IsTrue(data.Length == 3);
+                Assert.IsTrue(data[0] == 10);
+                Assert.IsTrue(data[1] == 20);
+                Assert.IsTrue(data[2] == 30);
+            }
+
+            {// data item float array
+                item.Name = "floatArray";
+                item.Set(new float[] { 3.14f, 6.28f, 9.42f });
+                Assert.IsTrue(dataPoint.Create(item));
+                float[] data = dataPoint["floatArray"];
+                Assert.IsTrue(data != null);
+                Assert.IsTrue(data.Length == 3);
+                Assert.IsTrue(data[0] == 3.14f);
+                Assert.IsTrue(data[1] == 6.28f);
+                Assert.IsTrue(data[2] == 9.42f);
+            }
+
+            {// data item double array
+                item.Name = "doubleArray";
+                item.Set(new double[] { 3.14, 6.28, 9.42 });
+                Assert.IsTrue(dataPoint.Create(item));
+                double[] data = dataPoint["doubleArray"];
+                Assert.IsTrue(data != null);
+                Assert.IsTrue(data.Length == 3);
+                Assert.IsTrue(data[0] == 3.14);
+                Assert.IsTrue(data[1] == 6.28);
+                Assert.IsTrue(data[2] == 9.42);
+            }
+
+            {// data item decimal array
+                item.Name = "decimalArray";
+                item.Set(new decimal[] { 3.14m, 6.28m, 9.42m });
+                Assert.IsTrue(dataPoint.Create(item));
+                decimal[] data = dataPoint["decimalArray"];
+                Assert.IsTrue(data != null);
+                Assert.IsTrue(data.Length == 3);
+                Assert.IsTrue(data[0] == 3.14m);
+                Assert.IsTrue(data[1] == 6.28m);
+                Assert.IsTrue(data[2] == 9.42m);
+            }
+
+            {// data item bool array
+                item.Name = "boolArray";
+                item.Set(new bool[] { true, false, true });
+                Assert.IsTrue(dataPoint.Create(item));
+                bool[] data = dataPoint["boolArray"];
+                Assert.IsTrue(data != null);
+                Assert.IsTrue(data.Length == 3);
+                Assert.IsTrue(data[0] == true);
+                Assert.IsTrue(data[1] == false);
+                Assert.IsTrue(data[2] == true);
+            }
+        }
+
+        /// <summary>
         /// Testing conversion of data to specific types
         /// </summary>
         [TestMethod]

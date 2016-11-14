@@ -168,6 +168,18 @@ namespace LibPearDataPoint
         }
 
         /// <summary>
+        /// Creates a new dataitem with specific name and array
+        /// </summary>
+        /// <typeparam name="T">Type of the array values</typeparam>
+        /// <param name="name">Name of the dataitem</param>
+        /// <param name="array">The array</param>
+        /// <returns></returns>
+        public static bool Create<T>(string name, T[] array)
+        {
+            return Pear.Data.Create(name, array);
+        }
+
+        /// <summary>
         /// Updates dataitem value
         /// </summary>
         /// <typeparam name="T">type of a value</typeparam>

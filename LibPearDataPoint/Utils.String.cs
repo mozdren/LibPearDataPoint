@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace LibPearDataPoint
 {
@@ -42,6 +44,38 @@ namespace LibPearDataPoint
             }
 
             return _regEx.IsMatch(name);
+        }
+
+        /// <summary>
+        /// Method spits string to array using a specific separator string
+        /// </summary>
+        /// <param name="text">text to be splitted</param>
+        /// <param name="separatorString">separator of the array</param>
+        /// <returns>array of separated strings</returns>
+        internal static string[] Split(this string text, string separatorString)
+        {
+            if (text == null || string.IsNullOrEmpty(separatorString))
+            {
+                Trace.WriteLine("Splitting null text or separator is not defined");
+                throw new System.Exception("text to be splitted cannot be null and separator must be nonempty");
+            }
+
+            var processedText = text;
+
+            var retList = new List<string>();
+            var index = processedText.IndexOf(separatorString);
+
+            while (0 <= index)
+            {
+                var prefix = processedText.Substring(0, index);
+                retList.Add(prefix);
+                processedText = processedText.Substring(index + separatorString.Length);
+                index = processedText.IndexOf(separatorString);
+            }
+
+            retList.Add(processedText);
+
+            return retList.ToArray();
         }
 
         #endregion

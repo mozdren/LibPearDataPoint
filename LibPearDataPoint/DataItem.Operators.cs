@@ -395,5 +395,159 @@ namespace LibPearDataPoint
         }
 
         #endregion
+
+        #region Implicit operators for arrays
+
+        /// <summary>
+        /// Implicit Conversion from dataitem to int array
+        /// </summary>
+        /// <param name="dataItem">data item</param>
+        /// <returns>integer array</returns>
+        public static implicit operator int[] (DataItem dataItem)
+        {
+            return dataItem.AsIntArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion to unsigned int array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>unsigned int array</returns>
+        public static implicit operator uint[] (DataItem dataItem)
+        {
+            return dataItem.AsUIntArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion to short array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>short array</returns>
+        public static implicit operator short[] (DataItem dataItem)
+        {
+            return dataItem.AsShortArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion to unsigned short array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>unsigned short array</returns>
+        public static implicit operator ushort[] (DataItem dataItem)
+        {
+            return dataItem.AsUShortArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion to long array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>long array</returns>
+        public static implicit operator long[] (DataItem dataItem)
+        {
+            return dataItem.AsLongArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion to unsigned long array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>unsigned long array</returns>
+        public static implicit operator ulong[] (DataItem dataItem)
+        {
+            return dataItem.AsULongArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion to byte array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>byte array</returns>
+        public static implicit operator byte[] (DataItem dataItem)
+        {
+            return dataItem.AsByteArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion to sbyte array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>signed byte array</returns>
+        public static implicit operator sbyte[] (DataItem dataItem)
+        {
+            return dataItem.AsSByteArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion to char array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>char array</returns>
+        public static implicit operator char[] (DataItem dataItem)
+        {
+            return dataItem.AsCharArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion do decimal array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>decimal array</returns>
+        public static implicit operator decimal[] (DataItem dataItem)
+        {
+            return dataItem.AsDecimalArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion to double array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>double array</returns>
+        public static implicit operator double[] (DataItem dataItem)
+        {
+            return dataItem.AsDoubleArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion to float array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>float array</returns>
+        public static implicit operator float[] (DataItem dataItem)
+        {
+            return dataItem.AsFloatArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion to boolean array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>boolean array</returns>
+        public static implicit operator bool[] (DataItem dataItem)
+        {
+            return dataItem.AsBoolArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion to DateTime array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>datetime array</returns>
+        public static implicit operator DateTime[] (DataItem dataItem)
+        {
+            return dataItem.AsDateTimeArray();
+        }
+
+        /// <summary>
+        /// Implicit conversion to string array
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <returns>string array</returns>
+        public static implicit operator string[] (DataItem dataItem)
+        {
+            return dataItem.AsStringArray();
+        }
+
+        #endregion
     }
 }

@@ -259,6 +259,39 @@ namespace LibPearDataPoint
         }
 
         /// <summary>
+        /// Crate a datapoint with specific array
+        /// </summary>
+        /// <typeparam name="T">Type to be used</typeparam>
+        /// <param name="key">key as an identifier of the dataitem</param>
+        /// <param name="array">array to be set</param>
+        /// <returns>return true if successfuly created</returns>
+        public bool Create<T>(string key, T[] value)
+        {
+            if (string.IsNullOrWhiteSpace(key) || value == null)
+            {
+                return false;
+            }
+
+            // check if exists localy
+            if (PearLocalDataPoint[key] != null)
+            {
+                return false;
+            }
+
+            // if someone already announced having item with specified key, then we cannot create new
+            if (PearAnnouncementListener.GetNames().Contains(key))
+            {
+                return false;
+            }
+
+            // if it doesn't exist locally or even over network, then we are allowed to create data item in local datapoint
+            var dataItem = new DataItem { Name = key };
+            dataItem.SetSupported(value);
+
+            return PearLocalDataPoint.Create(dataItem);
+        }
+
+        /// <summary>
         /// Updates the value localy if the item is local, or sends a command to update the value in distant datapoint
         /// </summary>
         /// <typeparam name="T">generic type of the value to be set</typeparam>

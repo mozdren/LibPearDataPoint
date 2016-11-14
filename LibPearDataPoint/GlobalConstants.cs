@@ -27,6 +27,23 @@
             public const string UShort = "System.UInt16";
             public const string String = "System.String";
             public const string DateTime = "System.DateTime";
+
+            public const string BoolArray = "System.Boolean[]";
+            public const string ByteArray = "System.Byte[]";
+            public const string SByteArray = "System.SByte[]";
+            public const string CharArray = "System.Char[]";
+            public const string DecimalArray = "System.Decimal[]";
+            public const string DoubleArray = "System.Double[]";
+            public const string SingleArray = "System.Single[]";
+            public const string IntArray = "System.Int32[]";
+            public const string UIntArray = "System.UInt32[]";
+            public const string LongArray = "System.Int64[]";
+            public const string ULongArray = "System.UInt64[]";
+            public const string ObjectArray = "System.Object[]";
+            public const string ShortArray = "System.Int16[]";
+            public const string UShortArray = "System.UInt16[]";
+            public const string StringArray = "System.String[]";
+            public const string DateTimeArray = "System.DateTime[]";
         }
 
         /// <summary>
@@ -58,6 +75,27 @@
             /// Ping the service
             /// </summary>
             internal const string Ping = "PING";
+        }
+
+        /// <summary>
+        /// Special Separator Strings
+        /// </summary>
+        internal static class Separators
+        {
+            /// <summary>
+            /// Array Prefix
+            /// </summary>
+            internal const string ArrayPrefix = "{{[[";
+
+            /// <summary>
+            /// Array Items Separator
+            /// </summary>
+            internal const string ArraySeparator = "]]|[[";
+
+            /// <summary>
+            /// Array Postfix
+            /// </summary>
+            internal const string ArrayPostfix = "]]}}";
         }
     }
 }

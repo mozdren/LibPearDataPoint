@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LibPearDataPoint
 {
@@ -341,6 +343,594 @@ namespace LibPearDataPoint
 
         #endregion
 
+        #region Array Getters
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static int[] AsIntArray(this DataItem dataItem)
+        {
+            if (dataItem == null || 
+                string.IsNullOrWhiteSpace(dataItem.Value) || 
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<int>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                int output;
+
+                if (!int.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+            
+            return ret.ToArray();
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static float[] AsFloatArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<float>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                float output;
+
+                if (!float.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+
+            return ret.ToArray();
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static double[] AsDoubleArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<double>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                double output;
+
+                if (!double.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+
+            return ret.ToArray();
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static long[] AsLongArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<long>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                long output;
+
+                if (!long.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+
+            return ret.ToArray();
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static bool[] AsBoolArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<bool>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                bool output;
+
+                if (!bool.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+
+            return ret.ToArray();
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static byte[] AsByteArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<byte>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                byte output;
+
+                if (!byte.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+
+            return ret.ToArray();
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static sbyte[] AsSByteArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<sbyte>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                sbyte output;
+
+                if (!sbyte.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+
+            return ret.ToArray();
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static char[] AsCharArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<char>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                char output;
+
+                if (!char.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+
+            return ret.ToArray();
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static decimal[] AsDecimalArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<decimal>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                decimal output;
+
+                if (!decimal.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+
+            return ret.ToArray();
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static uint[] AsUIntArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<uint>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                uint output;
+
+                if (!uint.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+
+            return ret.ToArray();
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static ulong[] AsULongArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<ulong>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                ulong output;
+
+                if (!ulong.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+
+            return ret.ToArray();
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static short[] AsShortArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<short>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                short output;
+
+                if (!short.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+
+            return ret.ToArray();
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static ushort[] AsUShortArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<ushort>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                ushort output;
+
+                if (!ushort.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+
+            return ret.ToArray();
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static string[] AsStringArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return new string[] { };
+            }
+
+            return stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+        }
+
+        /// <summary>
+        /// Returns dataitem value as an array.
+        /// </summary>
+        /// <param name="dataItem">The data item.</param>
+        /// <returns>array</returns>
+        internal static DateTime[] AsDateTimeArray(this DataItem dataItem)
+        {
+            if (dataItem == null ||
+                string.IsNullOrWhiteSpace(dataItem.Value) ||
+                !dataItem.Value.StartsWith(GlobalConstants.Separators.ArrayPrefix) ||
+                !dataItem.Value.EndsWith(GlobalConstants.Separators.ArrayPostfix))
+            {
+                return null;
+            }
+
+            var ret = new List<DateTime>();
+
+            var stringToParse = dataItem.Value.Replace(GlobalConstants.Separators.ArrayPrefix, "").Replace(GlobalConstants.Separators.ArrayPostfix, "");
+            if (string.IsNullOrWhiteSpace(stringToParse))
+            {
+                return ret.ToArray();
+            }
+
+            var stringArray = stringToParse.Split(GlobalConstants.Separators.ArraySeparator);
+
+            foreach (var stringItem in stringArray)
+            {
+                DateTime output;
+
+                if (!DateTime.TryParse(stringItem, out output))
+                {
+                    return null;
+                }
+
+                ret.Add(output);
+            }
+
+            return ret.ToArray();
+        }
+
+        #endregion
+
         #region Setters
 
         /// <summary>
@@ -521,6 +1111,13 @@ namespace LibPearDataPoint
             }
 
             var valueType = value.GetType().ToString();
+
+            if (valueType.EndsWith("[]"))
+            {
+                dataItem.SetSupportedArray((object[])value);
+                return;
+            }
+
             switch (valueType)
             {
                 case GlobalConstants.Types.Bool: dataItem.Set((bool)value); break;
@@ -539,6 +1136,250 @@ namespace LibPearDataPoint
                 case GlobalConstants.Types.UShort: dataItem.Set((ushort)value); break;
                 case GlobalConstants.Types.DateTime: dataItem.Set((DateTime)value); break;
                 default: throw new InvalidCastException("The value is not of a supported type");
+            }
+        }
+
+        #endregion
+
+        #region Array Setters
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, bool[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, byte[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, char[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, decimal[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, double[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, int[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, long[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, sbyte[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, short[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, float[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, string[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, uint[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, ulong[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, ushort[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array);
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets a value which represents an array from the input
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="array">array to be set</param>
+        internal static void Set(this DataItem dataItem, DateTime[] array)
+        {
+            var data = string.Join(GlobalConstants.Separators.ArraySeparator, array.Select(i => i.ToString("O")));
+            dataItem.Value = string.Format("{0}{1}{2}", GlobalConstants.Separators.ArrayPrefix, data, GlobalConstants.Separators.ArrayPostfix);
+        }
+
+        /// <summary>
+        /// Sets enumeration if the data to be set are supported by the dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">values to be set</param>
+        internal static void SetSupported(this DataItem dataItem, IEnumerable<object> values)
+        {
+            dataItem.SetSupported(values.ToArray());
+        }
+
+        /// <summary>
+        /// Sets array if the data to be set are supported by the dataitem
+        /// </summary>
+        /// <param name="dataItem">dataitem</param>
+        /// <param name="value">values to be set</param>
+        internal static void SetSupportedArray(this DataItem dataItem, object[] values)
+        {
+            if (values == null)
+            {
+                throw new InvalidOperationException("array to be set cannot be null");
+            }
+
+            var valueType = values.GetType().ToString();
+            switch (valueType)
+            {
+                case GlobalConstants.Types.BoolArray:
+                    dataItem.Set(values.Select(v => (bool)v).ToArray());
+                    break;
+                case GlobalConstants.Types.ByteArray:
+                    dataItem.Set(values.Select(v => (byte)v).ToArray());
+                    break;
+                case GlobalConstants.Types.CharArray:
+                    dataItem.Set(values.Select(v => (char)v).ToArray());
+                    break;
+                case GlobalConstants.Types.DecimalArray:
+                    dataItem.Set(values.Select(v => (Decimal)v).ToArray());
+                    break;
+                case GlobalConstants.Types.DoubleArray:
+                    dataItem.Set(values.Select(v => (Double)v).ToArray());
+                    break;
+                case GlobalConstants.Types.IntArray:
+                    dataItem.Set(values.Select(v => (int)v).ToArray());
+                    break;
+                case GlobalConstants.Types.LongArray:
+                    dataItem.Set(values.Select(v => (long)v).ToArray());
+                    break;
+                case GlobalConstants.Types.SByteArray:
+                    dataItem.Set(values.Select(v => (sbyte)v).ToArray());
+                    break;
+                case GlobalConstants.Types.ShortArray:
+                    dataItem.Set(values.Select(v => (short)v).ToArray());
+                    break;
+                case GlobalConstants.Types.SingleArray:
+                    dataItem.Set(values.Select(v => (float)v).ToArray());
+                    break;
+                case GlobalConstants.Types.StringArray:
+                    dataItem.Set(values.Select(v => v.ToString()).ToArray());
+                    break;
+                case GlobalConstants.Types.UIntArray:
+                    dataItem.Set(values.Select(v => (uint)v).ToArray());
+                    break;
+                case GlobalConstants.Types.ULongArray:
+                    dataItem.Set(values.Select(v => (ulong)v).ToArray());
+                    break;
+                case GlobalConstants.Types.UShortArray:
+                    dataItem.Set(values.Select(v => (ushort)v).ToArray());
+                    break;
+                case GlobalConstants.Types.DateTimeArray:
+                    dataItem.Set(values.Select(v => (DateTime)v).ToArray());
+                    break;
+                default:
+                    throw new InvalidCastException("The type of array values is not supported");
             }
         }
 

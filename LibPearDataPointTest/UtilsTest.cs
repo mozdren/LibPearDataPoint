@@ -33,6 +33,24 @@ namespace LibPearDataPointTest
             var testStr = "a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z";
             Assert.IsTrue(Utils.IsNameValid(testStr));
             Assert.IsTrue(Utils.IsNameValid(testStr.ToUpper()));
+
+            var splittedArray = "***text1***text2***text3*** ***".Split("***");
+            Assert.IsTrue(splittedArray.Count() == 6);
+            Assert.IsTrue(splittedArray[0] == "");
+            Assert.IsTrue(splittedArray[1] == "text1");
+            Assert.IsTrue(splittedArray[2] == "text2");
+            Assert.IsTrue(splittedArray[3] == "text3");
+            Assert.IsTrue(splittedArray[4] == " ");
+            Assert.IsTrue(splittedArray[5] == "");
+
+            splittedArray = "*** ".Split("***");
+            Assert.IsTrue(splittedArray.Count() == 2);
+            Assert.IsTrue(splittedArray[0] == "");
+            Assert.IsTrue(splittedArray[1] == " ");
+
+            splittedArray = " ".Split("***");
+            Assert.IsTrue(splittedArray.Count() == 1);
+            Assert.IsTrue(splittedArray[0] == " ");
         }
 
         [TestMethod]
